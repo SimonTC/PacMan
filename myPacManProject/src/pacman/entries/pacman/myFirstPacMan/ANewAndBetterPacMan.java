@@ -20,7 +20,7 @@ import pacman.game.Game;
 public class ANewAndBetterPacMan extends Controller<MOVE>
 {
 	//Parameters
-	private  int MAX_DEPTH = 40; 
+	private  int MAX_DEPTH = 100; 
 	private  int PILL_VALUE = 1;
 	private  int POWER_PILL_VALUE = 2;
 	private  int NONEDIBLE_GHOST_VALUE = -5;
@@ -39,7 +39,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 		try {
 			loadParameters("PacManParameters");
 		} catch (FileNotFoundException e) {
-			System.out.println("Bruger standard parametre");
+			//System.out.println("Bruger standard parametre");
 		}
 	}
 	
