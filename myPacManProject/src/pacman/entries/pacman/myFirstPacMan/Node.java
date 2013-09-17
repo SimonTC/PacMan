@@ -19,11 +19,15 @@ public class Node {
 	public Node(Game game, int nodeIndex, Node parent){
 		this.nodeIndex=nodeIndex;
 		this.parent = parent;
-		getAttributes(game);
+		evaluateNode(game);
 		
 	}
 	
-	private void getAttributes (Game game){
+	public void reEvaluateNode (Game game){
+		evaluateNode(game);		
+	}
+	
+	private void evaluateNode (Game game){
 		//test for ghosts
 		hasNonEdibleGhost = nodeContainsNonEdibleGhost(game);
 		hasEdibleGhost = nodeContainsEdibleGhost(game);
@@ -33,6 +37,7 @@ public class Node {
 		hasPowerPill = nodeHasPowerPill(game);
 		
 		//Test if it is in the middle of a junction (3 or more neighbours)
+		isJunction = nodeIsAJunction(game);
 		
 	}
 	

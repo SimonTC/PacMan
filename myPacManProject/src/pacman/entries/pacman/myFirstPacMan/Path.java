@@ -2,6 +2,8 @@ package pacman.entries.pacman.myFirstPacMan;
 
 import java.util.ArrayList;
 
+import pacman.game.Game;
+
 public class Path {
 	private ArrayList<Node> nodes;
 	private Node startNode;
@@ -65,6 +67,15 @@ public class Path {
 		return true;
 	}
 	
+	public void reEvaluateValue(Game game){
+		value = 0;
+		for (Node n : nodes){
+			n.reEvaluateNode(game);
+			n.setValue(calculateNodeValue(n));
+			value = value + n.getValue();
+		}
+	}
+	
 	private int calculateNodeValue(Node node){
 		int result = 0;
 		if (node.hasPill()){
@@ -115,11 +126,16 @@ public class Path {
 	}
 	
 	public Node getNextNode(){
+		Node nodeToReturn;
 		if (nodes.size() <= 1){
-			return nodes.get(0);
+			nodeToReturn = nodes.get(0);
+			nodes.remove(0);
 		} else {
-			return nodes.get(1);
+			nodeToReturn = nodes.get(1);
+			nodes.remove(0);
+			nodes.remove(1);
 		}
+		return nodeToReturn;
 	}
 
 }

@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import pacman.controllers.Controller;
 import pacman.game.Constants.DM;
+import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
@@ -25,7 +26,10 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 	private  int NONEDIBLE_GHOST_VALUE = -5;
 	private  int EDIBLE_GHOST_VALUE = 5;
 	private  int JUNCTION_VALUE = 4;
+	private  int MIN_DISTANCE = 10;
+	private  int MIN_EADIBLE_TIME = 10;
 	private  DM DISTANCE_METRIC = DM.MANHATTAN;
+	private Path currentPath = null;
 	
 	
 	private MOVE myMove=MOVE.NEUTRAL;
@@ -37,16 +41,6 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 		} catch (FileNotFoundException e) {
 			System.out.println("Brugte standard parametre");
 		}
-		/*
-		PrintStream out = null;
-		try {
-			out = new PrintStream(new FileOutputStream("debug.txt"));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.setOut(out);
-		*/
 	}
 	
 	public MOVE getMove(Game game, long timeDue) 
@@ -56,14 +50,22 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 		int maxDepth = MAX_DEPTH;
 		int pacManIndex = game.getPacmanCurrentNodeIndex();
 		Node thisNode = new Node(game, pacManIndex, null);
+		POWER_PILL_VALUE = calculatePowerPillValue(game, pacManIndex, MIN_DISTANCE, MIN_EADIBLE_TIME);
 	//printNodeInfo(thisNode, game);
-		Path startPath = new Path(maxDepth, thisNode, PILL_VALUE, POWER_PILL_VALUE, NONEDIBLE_GHOST_VALUE, EDIBLE_GHOST_VALUE, JUNCTION_VALUE);
+		Path startPath = null;
+		if (currentPath == null){
+			startPath = new Path(maxDepth, thisNode, PILL_VALUE, POWER_PILL_VALUE, NONEDIBLE_GHOST_VALUE, EDIBLE_GHOST_VALUE, JUNCTION_VALUE);
+		} else {
+			currentPath.reEvaluateValue(game);
+			startPath = currentPath;
+		}
 		calculatePossiblePaths(game, maxDepth, startPath);
 	//printPossiblePaths();
 		Path optimalPath = findOptimalPath();
 	//printOptimalPath(optimalPath);
 		int nextNodeIndex = optimalPath.getNextNode().getNodeIndex();
 		myMove = game.getNextMoveTowardsTarget(pacManIndex, nextNodeIndex, DISTANCE_METRIC);
+		currentPath = optimalPath;
 		return myMove;
 	}
 	
@@ -104,6 +106,38 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 		}
 		return result;
 	}
+	
+	private int calculatePowerPillValue (Game game, int pacManIndex, int minDistance, int minEadibleTime){
+		GHOST nearestFreeGhost = getNearestFreeGhost(game, pacManIndex);
+		if (nearestFreeGhost == null){
+			return -2;
+		}
+		int ghostIndex = game.getGhostCurrentNodeIndex(nearestFreeGhost);
+		if (game.getDistance(pacManIndex, ghostIndex, DISTANCE_METRIC) < minDistance) {
+			return 5;
+		}
+		
+		if (game.getGhostEdibleTime(nearestFreeGhost)< minEadibleTime){
+			return 0;
+		} else {
+			return -2;
+		}
+	}
+	
+	private GHOST getNearestFreeGhost(Game game, int pacManIndex){
+		double distToNearestGhost = 10000;
+		GHOST nearestGhost = null;
+		for (GHOST ghost : GHOST.values()){
+			int ghostNode = game.getGhostCurrentNodeIndex(ghost);
+			double distToGhost = game.getDistance(pacManIndex, ghostNode, DISTANCE_METRIC);
+			if (distToGhost<distToNearestGhost && game.getGhostLairTime(ghost)>0){
+				distToNearestGhost = distToGhost;
+				nearestGhost = ghost;
+			}
+		}
+		return nearestGhost;
+	}
+	
 	private void printPossiblePaths(){
 		for (Path p : possiblePaths){
 			System.out.print("(" + p.getValue() + "):  " );
@@ -116,7 +150,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 	
 	/**
 	 * How the file should look:
-	 * maxDepth pillValue powerPillValue nonEdibleGhostValue EdibleGhostValue DistanceMeasurer
+	 * maxDepth pillValue powerPillValue nonEdibleGhostValue EdibleGhostValue DistanceMeasurer JunctionValue
 	 * @param textFileName
 	 * @throws FileNotFoundException
 	 */
@@ -134,6 +168,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 			NONEDIBLE_GHOST_VALUE = input.nextInt();
 			EDIBLE_GHOST_VALUE = input.nextInt();
 			DISTANCE_METRIC = parseDistanceMetric(input.nextInt());
+			JUNCTION_VALUE = input.nextInt();
 		}
 	}
 	
