@@ -7,7 +7,6 @@ import pacman.game.Game;
 public class Path {
 	private ArrayList<Node> nodes;
 	private Node startNode;
-	private Node lastNode;
 	private int value = 0;
 	private boolean hasNonEdibleGhost = false;
 	private int maxDepth;
@@ -40,13 +39,14 @@ public class Path {
 	 * @param maxDepth
 	 * @param startOfPath
 	 */
-	public Path(int maxDepth, Path startOfPath, int pillValue, int powerPillValue, int nonEdibleGhostValue, int edibleGhostValue){
+	public Path(int maxDepth, Path startOfPath, int pillValue, int powerPillValue, int nonEdibleGhostValue, int edibleGhostValue, int junctionValue){
 		//Loading attributes
 		this.maxDepth = maxDepth;
 		this.PILL_VALUE=pillValue;
 		this.POWER_PILL_VALUE = powerPillValue;
 		this.NONEDIBLE_GHOST_VALUE = nonEdibleGhostValue;
 		this.EDIBLE_GHOST_VALUE = edibleGhostValue;
+		this.JUNCTION_VALUE = junctionValue;
 		
 		nodes = new ArrayList<Node>();
 		this.value = startOfPath.getValue();
@@ -67,8 +67,9 @@ public class Path {
 		return true;
 	}
 	
-	public void reEvaluateValue(Game game){
+	public void reEvaluateValue(Game game, int powerPillValue){
 		value = 0;
+		POWER_PILL_VALUE = powerPillValue;
 		for (Node n : nodes){
 			n.reEvaluateNode(game);
 			n.setValue(calculateNodeValue(n));
@@ -133,7 +134,6 @@ public class Path {
 		} else {
 			nodeToReturn = nodes.get(1);
 			nodes.remove(0);
-			nodes.remove(1);
 		}
 		return nodeToReturn;
 	}

@@ -26,7 +26,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 	private  int NONEDIBLE_GHOST_VALUE = -5;
 	private  int EDIBLE_GHOST_VALUE = 5;
 	private  int JUNCTION_VALUE = 4;
-	private  int MIN_DISTANCE = 10;
+	private  int MIN_DISTANCE = 20;
 	private  int MIN_EADIBLE_TIME = 10;
 	private  DM DISTANCE_METRIC = DM.MANHATTAN;
 	private Path currentPath = null;
@@ -56,8 +56,11 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 		if (currentPath == null){
 			startPath = new Path(maxDepth, thisNode, PILL_VALUE, POWER_PILL_VALUE, NONEDIBLE_GHOST_VALUE, EDIBLE_GHOST_VALUE, JUNCTION_VALUE);
 		} else {
-			currentPath.reEvaluateValue(game);
+			if (continueDownCurrentPath(game, currentPath)){
 			startPath = currentPath;
+			}else {
+				startPath = new Path(maxDepth, thisNode, PILL_VALUE, POWER_PILL_VALUE, NONEDIBLE_GHOST_VALUE, EDIBLE_GHOST_VALUE, JUNCTION_VALUE);
+			}
 		}
 		calculatePossiblePaths(game, maxDepth, startPath);
 	//printPossiblePaths();
@@ -68,7 +71,21 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 		currentPath = optimalPath;
 		return myMove;
 	}
-	
+	/*
+	 * Evaluates the current path to see if PacMan should continue this route
+	 */
+	private boolean continueDownCurrentPath(Game game, Path currentPath){
+		currentPath.reEvaluateValue(game, POWER_PILL_VALUE);
+		boolean startNodeIsJunction = currentPath.getStartNode().isJunction();
+		boolean dangerousGhostIsNear = distanceToNearestNonEatableGhost(game) < MIN_DISTANCE;
+		if (startNodeIsJunction || dangerousGhostIsNear){				
+			return false;
+		} else{
+			return true;
+		}
+
+
+	}
 	private void calculatePossiblePaths(Game game, int maxDepth, Path startPath){
 		if (startPath.getNumberOfNodes() == maxDepth){
 			possiblePaths.add(startPath);
@@ -76,7 +93,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 			Node parent = startPath.getLastNode();
 			ArrayList<Node> children = parent.getChildren(game);
 			for (Node n : children){
-				Path newPath = new Path(maxDepth,startPath, PILL_VALUE, POWER_PILL_VALUE, NONEDIBLE_GHOST_VALUE, EDIBLE_GHOST_VALUE);
+				Path newPath = new Path(maxDepth,startPath, PILL_VALUE, POWER_PILL_VALUE, NONEDIBLE_GHOST_VALUE, EDIBLE_GHOST_VALUE, JUNCTION_VALUE);
 				newPath.addNode(n);
 				calculatePossiblePaths(game, maxDepth, newPath);
 			}
@@ -112,8 +129,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 		if (nearestFreeGhost == null){
 			return -2;
 		}
-		int ghostIndex = game.getGhostCurrentNodeIndex(nearestFreeGhost);
-		if (game.getDistance(pacManIndex, ghostIndex, DISTANCE_METRIC) < minDistance) {
+		if (distanceToNearestNonEatableGhost(game) < minDistance) {
 			return 5;
 		}
 		
@@ -121,6 +137,17 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 			return 0;
 		} else {
 			return -2;
+		}
+	}
+	
+	private double distanceToNearestNonEatableGhost(Game game){
+		int pacManIndex = game.getPacmanCurrentNodeIndex();
+		GHOST nearestFreeGhost = getNearestFreeGhost(game, pacManIndex);
+		if (nearestFreeGhost != null){
+			int ghostIndex = game.getGhostCurrentNodeIndex(nearestFreeGhost);
+			return game.getDistance(pacManIndex, ghostIndex, DISTANCE_METRIC);
+		} else {
+			return 10000;
 		}
 	}
 	
