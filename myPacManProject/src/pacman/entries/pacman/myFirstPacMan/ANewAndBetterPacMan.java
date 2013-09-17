@@ -77,7 +77,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 	//printOptimalPath(optimalPath);
 		int nextNodeIndex = optimalPath.getNextNode().getNodeIndex();
 		myMove = game.getNextMoveTowardsTarget(pacManIndex, nextNodeIndex, DISTANCE_METRIC);
-		currentPath = optimalPath;
+	//	currentPath = optimalPath;
 		return myMove;
 	}
 	/*
