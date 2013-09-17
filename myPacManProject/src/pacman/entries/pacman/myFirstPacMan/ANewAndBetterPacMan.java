@@ -25,7 +25,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 	private  int POWER_PILL_VALUE = 2;
 	private  int NONEDIBLE_GHOST_VALUE = -5;
 	private  int EDIBLE_GHOST_VALUE = 5;
-	private  int JUNCTION_VALUE = 4;
+	private  int JUNCTION_VALUE = 0;
 	private  int MIN_DISTANCE = 20;
 	private  int MIN_EADIBLE_TIME = 10;
 	private  DM DISTANCE_METRIC = DM.MANHATTAN;
@@ -39,7 +39,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 		try {
 			loadParameters("PacManParameters");
 		} catch (FileNotFoundException e) {
-			System.out.println("Brugte standard parametre");
+			System.out.println("Bruger standard parametre");
 		}
 	}
 	
@@ -49,6 +49,9 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 		possiblePaths.clear();
 		int maxDepth = MAX_DEPTH;
 		int pacManIndex = game.getPacmanCurrentNodeIndex();
+		if (pacManIndex == game.getCurrentMaze().initialPacManNodeIndex){
+			currentPath = null;
+		}
 		Node thisNode = new Node(game, pacManIndex, null);
 		POWER_PILL_VALUE = calculatePowerPillValue(game, pacManIndex, MIN_DISTANCE, MIN_EADIBLE_TIME);
 	//printNodeInfo(thisNode, game);
@@ -129,7 +132,9 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 		if (nearestFreeGhost == null){
 			return -2;
 		}
-		if (distanceToNearestNonEatableGhost(game) < minDistance) {
+		double distToNearestGhost = distanceToNearestNonEatableGhost(game);
+//System.out.println("Distance to nearest ghost: " + distToNearestGhost);
+		if (distToNearestGhost < minDistance) {
 			return 5;
 		}
 		
@@ -157,7 +162,8 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 		for (GHOST ghost : GHOST.values()){
 			int ghostNode = game.getGhostCurrentNodeIndex(ghost);
 			double distToGhost = game.getDistance(pacManIndex, ghostNode, DISTANCE_METRIC);
-			if (distToGhost<distToNearestGhost && game.getGhostLairTime(ghost)>0){
+			int ghostLairTime = game.getGhostLairTime(ghost);
+			if (distToGhost<distToNearestGhost && game.getGhostLairTime(ghost)==0){
 				distToNearestGhost = distToGhost;
 				nearestGhost = ghost;
 			}

@@ -48,7 +48,7 @@ public class Executor
 
 		///*
 		//run multiple games in batch mode - good for testing.
-		int numTrials=10;
+		int numTrials=20;
 		exec.runExperiment(new ANewAndBetterPacMan(),new RandomGhosts(),numTrials);
 		//*/
 		
@@ -72,8 +72,10 @@ public class Executor
 		//time limit of DELAY ms still applies.
 		boolean visual=true;
 		boolean fixedTime=false;
-		exec.runGameTimedSpeedOptimised(new RandomPacMan(),new RandomGhosts(),fixedTime,visual);
-		*/
+		for (int i = 0; i < 10; i++){
+			exec.runGameTimedSpeedOptimised(new ANewAndBetterPacMan(),new RandomGhosts(),fixedTime,visual);
+		}
+			//*/
 		
 		/*
 		//run game in asynchronous mode and record it to file for replay at a later stage.
@@ -112,10 +114,11 @@ public class Executor
 			}
 			
 			avgScore+=game.getScore();
-			System.out.println(i+"\t"+game.getScore());
+			System.out.println(game.getScore());
+			//System.out.println(i+"\t"+game.getScore());
 		}
 		
-		System.out.println(avgScore/trials);
+		//System.out.println(avgScore/trials);
     }
 	
 	/**
