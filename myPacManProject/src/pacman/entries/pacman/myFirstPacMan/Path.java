@@ -13,19 +13,21 @@ public class Path {
 	private int POWER_PILL_VALUE;
 	private int NONEDIBLE_GHOST_VALUE;
 	private int EDIBLE_GHOST_VALUE;
+	private int JUNCTION_VALUE;
 	
 	/**
 	 * Used when starting a new path from scratch
 	 * @param maxDepth
 	 * @param startNode
 	 */
-	public Path(int maxDepth, Node startNode, int pillValue, int powerPillValue, int nonEdibleGhostValue, int edibleGhostValue){
+	public Path(int maxDepth, Node startNode, int pillValue, int powerPillValue, int nonEdibleGhostValue, int edibleGhostValue, int junctionValue){
 		//Loading attributes
 		this.maxDepth = maxDepth;
 		this.PILL_VALUE=pillValue;
 		this.POWER_PILL_VALUE = powerPillValue;
 		this.NONEDIBLE_GHOST_VALUE = nonEdibleGhostValue;
 		this.EDIBLE_GHOST_VALUE = edibleGhostValue;
+		this.JUNCTION_VALUE = junctionValue;
 		nodes = new ArrayList<Node>();
 		this.addNode(startNode);
 		this.startNode = startNode;
@@ -74,6 +76,9 @@ public class Path {
 			result = result + NONEDIBLE_GHOST_VALUE;
 		} else if (node.hasEdibleGhost()){
 			result = result + EDIBLE_GHOST_VALUE;
+		}
+		if (node.isJunction()){
+			result = result + JUNCTION_VALUE;
 		}
 		return result;
 		

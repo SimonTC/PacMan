@@ -12,6 +12,7 @@ public class Node {
 	private boolean hasEdibleGhost = false;
 	private boolean hasPill = false;
 	private boolean hasPowerPill = false;
+	private boolean isJunction = false;
 	private int nodeIndex;
 	private ArrayList<Node> children = new ArrayList<Node>();
 	
@@ -30,6 +31,9 @@ public class Node {
 		//Test for pills
 		hasPill = nodeHasPill(game);
 		hasPowerPill = nodeHasPowerPill(game);
+		
+		//Test if it is in the middle of a junction (3 or more neighbours)
+		
 	}
 	
 	private boolean nodeContainsNonEdibleGhost(Game game){
@@ -73,6 +77,15 @@ public class Node {
 		return false;
 	}
 	
+	private boolean nodeIsAJunction(Game game){
+		int[] junctions = game.getJunctionIndices();
+		for (int i: junctions){
+			if (i == nodeIndex){
+				return true;
+			}
+		}
+		return false;
+	}
 	public ArrayList<Node> getChildren(Game game){
 		if (children.isEmpty()){
 			int parentIndex = -1;
@@ -120,5 +133,9 @@ public class Node {
 	
 	public int getNodeIndex(){
 		return this.nodeIndex;
+	}
+	
+	public boolean isJunction(){
+		return this.isJunction;
 	}
 }

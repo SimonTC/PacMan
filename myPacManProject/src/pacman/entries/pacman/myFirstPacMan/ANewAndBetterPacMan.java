@@ -24,6 +24,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 	private  int POWER_PILL_VALUE = 2;
 	private  int NONEDIBLE_GHOST_VALUE = -5;
 	private  int EDIBLE_GHOST_VALUE = 5;
+	private  int JUNCTION_VALUE = 4;
 	private  DM DISTANCE_METRIC = DM.MANHATTAN;
 	
 	
@@ -56,7 +57,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 		int pacManIndex = game.getPacmanCurrentNodeIndex();
 		Node thisNode = new Node(game, pacManIndex, null);
 	//printNodeInfo(thisNode, game);
-		Path startPath = new Path(maxDepth, thisNode, PILL_VALUE, POWER_PILL_VALUE, NONEDIBLE_GHOST_VALUE, EDIBLE_GHOST_VALUE);
+		Path startPath = new Path(maxDepth, thisNode, PILL_VALUE, POWER_PILL_VALUE, NONEDIBLE_GHOST_VALUE, EDIBLE_GHOST_VALUE, JUNCTION_VALUE);
 		calculatePossiblePaths(game, maxDepth, startPath);
 	//printPossiblePaths();
 		Path optimalPath = findOptimalPath();
