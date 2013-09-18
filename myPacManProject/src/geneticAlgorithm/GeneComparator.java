@@ -2,7 +2,8 @@ package geneticAlgorithm;
 
 import java.util.Comparator;
 
-import geneticAlgorithm.Gene;
+import pacman.entries.pacman.myFirstPacMan.genetics.Gene;
+
 
 public class GeneComparator implements Comparator<Gene> {
 

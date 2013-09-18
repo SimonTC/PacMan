@@ -22,7 +22,7 @@ import pacman.controllers.examples.RandomNonRevPacMan;
 import pacman.controllers.examples.RandomPacMan;
 import pacman.controllers.examples.StarterGhosts;
 import pacman.controllers.examples.StarterPacMan;
-import pacman.entries.pacman.myFirstPacMan.ANewAndBetterPacMan;
+import pacman.entries.pacman.myFirstPacMan.controller.ANewAndBetterPacMan;
 import pacman.game.Game;
 import pacman.game.GameView;
 
