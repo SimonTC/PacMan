@@ -1,5 +1,6 @@
 package pacman.entries.pacman.myFirstPacMan.genetics;
 
+import geneticAlgorithm.GAExecutor;
 import geneticAlgorithm.GeneComparator;
 
 import java.io.BufferedWriter;
@@ -17,10 +18,10 @@ import pacman.Executor;
 
 public class GeneticAlgorithm {
     // --- constants
-    static int POPULATION_SIZE=10;
-    static int CHROMOSOME_SIZE = 6;
+    static int POPULATION_SIZE=50;
+    static int CHROMOSOME_SIZE = 7;
     static int MAX_GENERATIONS = 200;
-    static int NUMBER_OF_TRIALS = 5;
+    static int NUMBER_OF_TRIALS = 10;
     // --- variables:
 
     /**
@@ -59,7 +60,7 @@ public class GeneticAlgorithm {
             writeParametersToFile("PacManParameters", parameters);
             String[] param = new String[1];
             param[0] = "" + NUMBER_OF_TRIALS;
-            Executor.main(param);
+            GAExecutor.main(param);
             actGene.setFitness(getFitnessFromFile("score"));
             actGene.setScoreInfo(getInfoFromFile("score"));
         }
@@ -89,25 +90,24 @@ public class GeneticAlgorithm {
     }
     
     private double getFitnessFromFile (String filename){
-    	double score;
-    	double stdDev;
-    	double stdErr;
-    	double result = 0.0;
-    	File file = new File(filename + ".txt");
-		try {
-			Scanner input = new Scanner(file);
-			String s = input.next();
-			score = Double.parseDouble(s);
-			s = input.next();
-			stdDev = Double.parseDouble(s);
-			s = input.next();
-			stdErr = Double.parseDouble(s);
-			result = score / stdErr;
-		} catch (FileNotFoundException e) {
-			//oh noes!
-		}
-		return result;
+    	String values = getInfoFromFile(filename);
+    	String[] arrValues = values.split("\t");
+    	
+    	double totalScore = 0;
+    	for (int i = 0; i < arrValues.length; i++){
+    		totalScore += Double.parseDouble(arrValues[i]);
+    	}
+    	double avgScore = totalScore/ arrValues.length;
+    	double stdDev = 0;
+    	for (int i = 0; i < arrValues.length; i++){
+    		stdDev += Math.pow(Double.parseDouble(arrValues[i]) - avgScore,2);
+    	}
+    	stdDev = Math.sqrt(((double)1/(arrValues.length-1))* stdDev);
+    	double result = avgScore / stdDev;
+    	return result;
     }
+    
+
     /**
      * With each gene's fitness as a guide, chooses which genes should mate and produce offspring.
      * The offspring are added to the population, replacing the previous generation's Genes either
@@ -140,8 +140,8 @@ public class GeneticAlgorithm {
     		mPopulation.remove(mother);
     	}
     	
-    	//Remove 10 % worst
-    	int numToDie = (int) (mPopulation.size() * 0.1);
+    	//Remove 20 % worst
+    	int numToDie = (int) (mPopulation.size() * 0.2);
     	for (int i = 0 ; i < numToDie; i++){
     		mPopulation.remove(i);
     	}

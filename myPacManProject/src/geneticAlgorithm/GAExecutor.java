@@ -2,6 +2,8 @@ package geneticAlgorithm;
 
 import static pacman.game.Constants.DELAY;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.EnumMap;
 import java.util.Random;
 
@@ -19,18 +21,18 @@ public class GAExecutor {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		GAExecutor exec=new GAExecutor();
 		int numTrials=20;
-		for (int maxDepth = 20; maxDepth <= 120; maxDepth +=20){
-			exec.runExperiment(new ANewAndBetterPacMan(maxDepth),new RandomGhosts(),numTrials);
-			System.out.println();
+		if (args.length > 0){
+			numTrials = Integer.parseInt(args[0]);
 		}
+		GAExecutor exec=new GAExecutor();
+		exec.runExperiment(new ANewAndBetterPacMan(),new RandomGhosts(),numTrials);
+
 	}
 	
 	public void runExperiment(Controller<MOVE> pacManController,Controller<EnumMap<GHOST,MOVE>> ghostController,int trials)
     {
-    	double avgScore=0;
-    	
+    	String score ="";
     	Random rnd=new Random(0);
 		Game game;
 		
@@ -44,12 +46,20 @@ public class GAExecutor {
 		        		ghostController.getMove(game.copy(),System.currentTimeMillis()+DELAY));
 			}
 			
-			avgScore+=game.getScore();
-			System.out.print(game.getScore() + "\t");
-			//System.out.println(i+"\t"+game.getScore());
+			score += game.getScore() + "\t";
 		}
-		
-		//System.out.println(avgScore/trials);
+		printScoreToFile(score);
     }
-
+	
+	private void printScoreToFile(String score){
+    	try {
+    	    //PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("score.txt", true)));
+    		PrintWriter out = new PrintWriter("score.txt");
+    		out.println(score);
+    	    out.close();
+    	} catch (IOException e) {
+    	    //oh noes!
+    	}
+    	
+    }
 }
