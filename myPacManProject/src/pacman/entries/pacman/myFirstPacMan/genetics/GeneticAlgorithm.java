@@ -103,7 +103,8 @@ public class GeneticAlgorithm {
     		stdDev += Math.pow(Double.parseDouble(arrValues[i]) - avgScore,2);
     	}
     	stdDev = Math.sqrt(((double)1/(arrValues.length-1))* stdDev);
-    	double result = avgScore / stdDev;
+    	//double result = avgScore / stdDev; //AvgScore / StdDev doesn't give a good indication
+    	double result = avgScore;
     	return result;
     }
     
