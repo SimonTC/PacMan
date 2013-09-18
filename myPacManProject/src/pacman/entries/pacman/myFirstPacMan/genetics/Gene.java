@@ -42,6 +42,7 @@ public class Gene {
         mChromosome[3] = rand.nextInt(21) - 20; //Points for non edible ghosts
         mChromosome[4] = rand.nextInt(10); //Points for edible ghosts
         mChromosome[5] = rand.nextInt(2); //Distance metric
+        mChromosome[6] = rand.nextInt(5); //Points for junctions
     }
 
     /**
@@ -55,22 +56,22 @@ public class Gene {
      * These offspring will need to be added to the next generation.
      */
     public Gene[] reproduce(Gene other){
-        Gene[] result = new Gene[1];
+        Gene[] result = new Gene[2];
         Gene child1 = new Gene();
-        //Gene child2 = new Gene();
+        Gene child2 = new Gene();
         
         int chromosomeMid = mChromosome.length / 2;
         
         for (int i = 0; i <= chromosomeMid; i++){
         	child1.mChromosome[i] = this.mChromosome[i];
-        	//child2.mChromosome[i]=other.mChromosome[i];
+        	child2.mChromosome[i]=other.mChromosome[i];
         }
         for (int i = chromosomeMid +1; i < mChromosome.length; i++){
         	child1.mChromosome[i] = other.mChromosome[i];
-        	//child2.mChromosome[i]= this.mChromosome[i];
+        	child2.mChromosome[i]= this.mChromosome[i];
         }
         result[0] = child1;
-        //result[1] = child2;
+        result[1] = child2;
         return result;
         
     }
@@ -84,7 +85,7 @@ public class Gene {
      */
     public void mutate(){
     	Random rand = new Random();
-    	int selector = rand.nextInt(5);
+    	int selector = rand.nextInt(6);
     	int changeBy = 0;
     	switch(selector){
     	case 0: 
@@ -119,6 +120,12 @@ public class Gene {
 		    	changeBy = rand.nextInt(5) - 2;
 		        mChromosome[4] = mChromosome[4] + changeBy;
     		}
+    	case 5:
+		{
+	        //junction points
+	    	changeBy = rand.nextInt(5) - 2;
+	        mChromosome[6] = mChromosome[6] + changeBy;
+		}
 	    default:
 	    	{
 	    		// Distance Metric
