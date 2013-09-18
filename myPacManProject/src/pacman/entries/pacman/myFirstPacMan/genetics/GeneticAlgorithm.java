@@ -19,7 +19,7 @@ import pacman.Executor;
 public class GeneticAlgorithm {
     // --- constants
     static int POPULATION_SIZE=50;
-    static int CHROMOSOME_SIZE = 7;
+    static int CHROMOSOME_SIZE = 8;
     static int MAX_GENERATIONS = 200;
     static int NUMBER_OF_TRIALS = 10;
     // --- variables:

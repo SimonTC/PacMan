@@ -29,6 +29,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 	private  int MIN_DISTANCE = 20;
 	private  int MIN_EADIBLE_TIME = 10;
 	private  DM DISTANCE_METRIC = DM.MANHATTAN;
+	private 	int USE_MEMORY = 1;
 	private Path currentPath = null;
 	
 	
@@ -77,7 +78,9 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 	//printOptimalPath(optimalPath);
 		int nextNodeIndex = optimalPath.getNextNode().getNodeIndex();
 		myMove = game.getNextMoveTowardsTarget(pacManIndex, nextNodeIndex, DISTANCE_METRIC);
-	//	currentPath = optimalPath;
+		if (USE_MEMORY==1){
+			currentPath = optimalPath;
+		}
 		return myMove;
 	}
 	/*
@@ -189,7 +192,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 	
 	/**
 	 * How the file should look:
-	 * maxDepth pillValue powerPillValue nonEdibleGhostValue EdibleGhostValue DistanceMeasurer JunctionValue
+	 * maxDepth pillValue powerPillValue nonEdibleGhostValue EdibleGhostValue DistanceMeasurer JunctionValue useMemory
 	 * @param textFileName
 	 * @throws FileNotFoundException
 	 */
@@ -201,6 +204,8 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 			MAX_DEPTH = input.nextInt();
 			if (MAX_DEPTH < 1){
 				MAX_DEPTH = 1;
+			} else if (MAX_DEPTH > 100){
+				MAX_DEPTH = 100;
 			}
 			PILL_VALUE = input.nextInt();
 			POWER_PILL_VALUE = input.nextInt();
@@ -208,6 +213,8 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 			EDIBLE_GHOST_VALUE = input.nextInt();
 			DISTANCE_METRIC = parseDistanceMetric(input.nextInt());
 			JUNCTION_VALUE = input.nextInt();
+			USE_MEMORY = input.nextInt();
+			
 		}
 	}
 	

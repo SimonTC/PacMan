@@ -36,16 +36,14 @@ public class Gene {
      */
     public void randomizeChromosome(){
         Random rand = new Random();
-        mChromosome[0] = 40;
-        //mChromosome[0] = rand.nextInt(79) ; //Max depth
-        //*
+        mChromosome[0] = rand.nextInt(79) ; //Max depth
         mChromosome[1] = rand.nextInt(5); //Points for pills
         mChromosome[2] = rand.nextInt(10); //Points for power pills
         mChromosome[3] = rand.nextInt(21) - 20; //Points for non edible ghosts
         mChromosome[4] = rand.nextInt(10); //Points for edible ghosts
         mChromosome[5] = rand.nextInt(2); //Distance metric
         mChromosome[6] = rand.nextInt(5); //Points for junctions
-    	//*/
+        mChromosome[7] = rand.nextInt(2); //If memory is used or not
     }
 
     /**
@@ -88,8 +86,7 @@ public class Gene {
      */
     public void mutate(){
     	Random rand = new Random();
-    	int selector = rand.nextInt(6)+1;
-    	//int selector = rand.nextInt(7);
+    	int selector = rand.nextInt(8);
     	int changeBy = 0;
     	switch(selector){
     	case 0: 
@@ -125,15 +122,20 @@ public class Gene {
 		        mChromosome[4] = mChromosome[4] + changeBy;
     		}
     	case 5:
-		{
-	        //junction points
-	    	changeBy = rand.nextInt(5) - 2;
-	        mChromosome[6] = mChromosome[6] + changeBy;
-		}
-	    default:
 	    	{
 	    		// Distance Metric
 		        mChromosome[5] = rand.nextInt(2); //Distance metric
+	    	}
+    	case 6:
+			{
+		        //junction points
+		    	changeBy = rand.nextInt(5) - 2;
+		        mChromosome[6] = mChromosome[6] + changeBy;
+			}
+    	case 7:
+	    	{
+	    		// Use memory
+		        mChromosome[7] = rand.nextInt(2); 
 	    	}
     	}
     }
