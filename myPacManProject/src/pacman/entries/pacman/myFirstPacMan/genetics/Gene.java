@@ -38,7 +38,7 @@ public class Gene {
         Random rand = new Random();
         mChromosome[0] = rand.nextInt(79) + 20 ; //Max depth
         mChromosome[1] = rand.nextInt(5); //Points for pills
-        mChromosome[2] = rand.nextInt(10); //Points for power pills
+        mChromosome[2] = 2; //Points for power pills
         mChromosome[3] = rand.nextInt(21) - 20; //Points for non edible ghosts
         mChromosome[4] = rand.nextInt(10); //Points for edible ghosts
         mChromosome[5] = rand.nextInt(2); //Distance metric
@@ -105,9 +105,11 @@ public class Gene {
 	    	}
     	case 2:
     		{
-		    	//Power pills
+		    	/*
+    			//Power pills
 		    	changeBy = rand.nextInt(5) - 2; 
 		    	mChromosome[2] = mChromosome[2] + changeBy;
+		    	*/
     		}
     	case 3:
     		{
