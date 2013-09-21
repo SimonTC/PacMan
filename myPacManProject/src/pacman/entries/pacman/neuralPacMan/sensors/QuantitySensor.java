@@ -8,7 +8,7 @@ public class QuantitySensor extends Sensor {
 	}
 
 	@Override
-	protected double getNormalizedSensorValue(int pacManIndex, int[] validIndexes, Game game) {
+	protected float getNormalizedSensorValue(int pacManIndex, int[] validIndexes, Game game) {
 		int numOfItemsInArea = validIndexes.length;
 		int numOfItemsInLevel = 0;
 		
@@ -22,9 +22,9 @@ public class QuantitySensor extends Sensor {
 		return normalizeNumberOfItems(numOfItemsInArea, numOfItemsInLevel);
 	}
 	
-	public double normalizeNumberOfItems(int numOfItemsInArea, int numOfItemsInLevel)
+	public float normalizeNumberOfItems(int numOfItemsInArea, int numOfItemsInLevel)
 	{
-		return ((numOfItemsInArea-0)/(numOfItemsInLevel-0))*(1-0)+0;
+		return (float)((numOfItemsInArea-0)/(numOfItemsInLevel-0))*(1-0)+0;
 	}
 
 }

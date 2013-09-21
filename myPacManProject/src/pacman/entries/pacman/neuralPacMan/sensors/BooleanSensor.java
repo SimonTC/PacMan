@@ -13,7 +13,7 @@ public class BooleanSensor extends Sensor {
 	}
 
 	@Override
-	protected double getNormalizedSensorValue(int pacManIndex, int[] validIndexes, Game game) {
+	protected float getNormalizedSensorValue(int pacManIndex, int[] validIndexes, Game game) {
 		switch (objectToScanFor) {
 		case GHOST_EATABLE: return nearestGhostIsEatable(pacManIndex, game);
 		case GHOSTS_IN_JAIL: return allGhostsAreInJail(game);
@@ -22,7 +22,7 @@ public class BooleanSensor extends Sensor {
 		}
 	}
 	
-	private double isWall( int pacManIndex, Game game, int xCoord, int yCoord){
+	private float isWall( int pacManIndex, Game game, int xCoord, int yCoord){
 		int[] neighbours = game.getNeighbouringNodes(pacManIndex);
 		for (int i: neighbours){
 			int x = game.getNodeXCood(i);
@@ -35,7 +35,7 @@ public class BooleanSensor extends Sensor {
 		return 1;
 	}
 	
-	private double allGhostsAreInJail(Game game ){
+	private float allGhostsAreInJail(Game game ){
 		for (GHOST g: GHOST.values()){
 			if (game.getGhostLairTime(g) == 0){
 				return 0;
@@ -44,7 +44,7 @@ public class BooleanSensor extends Sensor {
 		return 1;
 	}
 	
-	private double nearestGhostIsEatable(int pacManIndex, Game game ){
+	private float nearestGhostIsEatable(int pacManIndex, Game game ){
 		ArrayList<GHOST> nearestGhost = new ArrayList<>();
 		double e = 0.5;
 		double ghostDist = 0;

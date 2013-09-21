@@ -9,7 +9,7 @@ public class DistanceSensor extends Sensor {
 	}
 
 	@Override
-	protected double getNormalizedSensorValue(int pacManIndex, int[] validIndexes,Game game) {
+	protected float getNormalizedSensorValue(int pacManIndex, int[] validIndexes,Game game) {
 		int closestIndex = game.getClosestNodeIndexFromNodeIndex(pacManIndex, validIndexes, DM.EUCLID);
 		int dist;
 		int numberOfNodesInLevel = game.getNumberOfNodes();
@@ -29,8 +29,8 @@ public class DistanceSensor extends Sensor {
 	 * @param dist Distance to be normalized
 	 * @return Normalized distance
 	 */
-	public double normalizeDistance(int dist, int numberOfNodesInLevel)
+	public float normalizeDistance(int dist, int numberOfNodesInLevel)
 	{
-		return ((dist-0)/(numberOfNodesInLevel-0))*(1-0)+0;
+		return (float)((dist-0)/(numberOfNodesInLevel-0))*(1-0)+0;
 	}
 }

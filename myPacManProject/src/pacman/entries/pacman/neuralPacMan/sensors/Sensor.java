@@ -27,7 +27,7 @@ public abstract class Sensor {
 		}
 	}
 	
-	public double scan(int pacManIndex, Game game) {
+	public float scan(int pacManIndex, Game game) {
 		int[] objectIndexes;
 		int[] validIndexes;
 		
@@ -42,7 +42,7 @@ public abstract class Sensor {
 		validIndexes = getValidIndexes(objectIndexes, game);
 		
 		if (validIndexes.length==0) {
-			return Double.POSITIVE_INFINITY;
+			return Float.POSITIVE_INFINITY;
 		}
 
 		return getNormalizedSensorValue(pacManIndex, validIndexes, game);
@@ -104,6 +104,6 @@ public abstract class Sensor {
 	/*
 	 * Scans it's sensor area and returns a double based on the items in the area
 	 */
-	protected abstract double getNormalizedSensorValue(int pacManIndex, int[]validIndexes, Game game);
+	protected abstract float getNormalizedSensorValue(int pacManIndex, int[]validIndexes, Game game);
 	
 }
