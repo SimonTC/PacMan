@@ -77,7 +77,7 @@ public class Executor
 		}
 			//*/
 		
-		///*
+		/*
 		//run game in asynchronous mode and record it to file for replay at a later stage.
 		boolean visual=true;
 		String fileName="replay - aggresive ghosts.txt";
