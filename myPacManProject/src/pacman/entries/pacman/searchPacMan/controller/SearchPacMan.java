@@ -17,7 +17,7 @@ import pacman.game.Game;
  * fill in the getAction() method. Any additional classes you write should either
  * be placed in this package or sub-packages (e.g., game.entries.pacman.mypackage).
  */
-public class ANewAndBetterPacMan extends Controller<MOVE>
+public class SearchPacMan extends Controller<MOVE>
 {
 	//Parameters
 	private  int MAX_DEPTH; 
@@ -36,7 +36,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 	private MOVE myMove=MOVE.NEUTRAL;
 	private ArrayList<Path> possiblePaths = new ArrayList<Path>();
 	
-	public ANewAndBetterPacMan(){
+	public SearchPacMan(){
 		try {
 			loadParameters("PacManParameters");
 		} catch (FileNotFoundException e) {
@@ -46,7 +46,7 @@ public class ANewAndBetterPacMan extends Controller<MOVE>
 	/*
 	 * Used when only depth is to be changed
 	 */
-	public ANewAndBetterPacMan(int depth){
+	public SearchPacMan(int depth){
 		MAX_DEPTH = depth; 
 	}
 	

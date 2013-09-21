@@ -10,7 +10,7 @@ import java.util.Random;
 import pacman.Executor;
 import pacman.controllers.Controller;
 import pacman.controllers.examples.RandomGhosts;
-import pacman.entries.pacman.searchPacMan.controller.ANewAndBetterPacMan;
+import pacman.entries.pacman.searchPacMan.controller.SearchPacMan;
 import pacman.game.Game;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -26,7 +26,7 @@ public class GAExecutor {
 			numTrials = Integer.parseInt(args[0]);
 		}
 		GAExecutor exec=new GAExecutor();
-		exec.runExperiment(new ANewAndBetterPacMan(),new RandomGhosts(),numTrials);
+		exec.runExperiment(new SearchPacMan(),new RandomGhosts(),numTrials);
 
 	}
 	
