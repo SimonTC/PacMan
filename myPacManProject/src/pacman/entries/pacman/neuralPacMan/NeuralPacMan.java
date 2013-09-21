@@ -16,8 +16,9 @@ import pacman.game.Game;
  * be placed in this package or sub-packages (e.g., game.entries.pacman.mypackage).
  */
 public class NeuralPacMan extends Controller<MOVE>{
-	
-	private Sensor[] sensors = new Sensor[30];
+	private final int NUMBER_OF_SENSORS = 30;
+	private Sensor[] sensors = new Sensor[NUMBER_OF_SENSORS];
+	private double[] sensorValues = new double[NUMBER_OF_SENSORS];
 	
 	private MOVE myMove=MOVE.NEUTRAL;
 	
@@ -69,9 +70,15 @@ public class NeuralPacMan extends Controller<MOVE>{
 		sensors[29] = new BooleanSensor(OBJ.GHOST_EATABLE, null, 0);
 	}
 	
-	public MOVE getMove(Game game, long timeDue) 
-	{
-		//Place your game logic here to play the game as Ms Pac-Man
+	public MOVE getMove(Game game, long timeDue) {
+		int pacManIndex = game.getPacmanCurrentNodeIndex();
+		for (int i = 0; i < NUMBER_OF_SENSORS; i++){
+			sensorValues[i] = sensors[i].scan(pacManIndex, game);
+		}
 		return myMove;
+	}
+	
+	public double[] getSensorValues(){
+		return sensorValues;
 	}
 }
