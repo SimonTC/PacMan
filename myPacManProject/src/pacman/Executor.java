@@ -46,7 +46,7 @@ public class Executor
 	{
 		Executor exec=new Executor();
 
-		///*
+		/*
 		//run multiple games in batch mode - good for testing.
 		int numTrials=20;
 		exec.runExperiment(new ANewAndBetterPacMan(),new RandomGhosts(),numTrials);
@@ -77,13 +77,13 @@ public class Executor
 		}
 			//*/
 		
-		/*
+		///*
 		//run game in asynchronous mode and record it to file for replay at a later stage.
 		boolean visual=true;
-		String fileName="replay.txt";
-		exec.runGameTimedRecorded(new HumanController(new KeyBoardInput()),new RandomGhosts(),visual,fileName);
+		String fileName="replay - aggresive ghosts.txt";
+		exec.runGameTimedRecorded(new HumanController(new KeyBoardInput()),new AggressiveGhosts(),visual,fileName);
 		//exec.replayGame(fileName,visual);
-		 */
+		 //*/
 	}
 	
     /**
