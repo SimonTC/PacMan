@@ -16,7 +16,7 @@ import pacman.game.Game;
  * be placed in this package or sub-packages (e.g., game.entries.pacman.mypackage).
  */
 public class NeuralPacMan extends Controller<MOVE>{
-	private final int NUMBER_OF_SENSORS = 30;
+	private final int NUMBER_OF_SENSORS = 38;
 	private Sensor[] sensors = new Sensor[NUMBER_OF_SENSORS];
 	private double[] sensorValues = new double[NUMBER_OF_SENSORS];
 	
@@ -27,15 +27,15 @@ public class NeuralPacMan extends Controller<MOVE>{
 	}
 	
 	private void addSensors(int sensorDistance){
-		//Adding enemy distance sensors
-		sensors[0] = new DistanceSensor(OBJ.GHOST, DIR.N, sensorDistance);
-		sensors[1] = new DistanceSensor(OBJ.GHOST, DIR.S, sensorDistance);
-		sensors[2] = new DistanceSensor(OBJ.GHOST, DIR.E, sensorDistance);
-		sensors[3] = new DistanceSensor(OBJ.GHOST, DIR.W, sensorDistance);
-		sensors[4] = new DistanceSensor(OBJ.GHOST, DIR.NE, sensorDistance);
-		sensors[5] = new DistanceSensor(OBJ.GHOST, DIR.NW, sensorDistance);
-		sensors[6] = new DistanceSensor(OBJ.GHOST, DIR.SE, sensorDistance);
-		sensors[7] = new DistanceSensor(OBJ.GHOST, DIR.SW, sensorDistance);
+		//Adding Unsafe ghost distance sensors
+		sensors[0] = new DistanceSensor(OBJ.GHOST_UNSAFE, DIR.N, sensorDistance);
+		sensors[1] = new DistanceSensor(OBJ.GHOST_UNSAFE, DIR.S, sensorDistance);
+		sensors[2] = new DistanceSensor(OBJ.GHOST_UNSAFE, DIR.E, sensorDistance);
+		sensors[3] = new DistanceSensor(OBJ.GHOST_UNSAFE, DIR.W, sensorDistance);
+		sensors[4] = new DistanceSensor(OBJ.GHOST_UNSAFE, DIR.NE, sensorDistance);
+		sensors[5] = new DistanceSensor(OBJ.GHOST_UNSAFE, DIR.NW, sensorDistance);
+		sensors[6] = new DistanceSensor(OBJ.GHOST_UNSAFE, DIR.SE, sensorDistance);
+		sensors[7] = new DistanceSensor(OBJ.GHOST_UNSAFE, DIR.SW, sensorDistance);
 		
 		//Adding PowerPill distance sensors
 		sensors[8] = new DistanceSensor(OBJ.POWERPILL, DIR.N, sensorDistance);
@@ -68,6 +68,18 @@ public class NeuralPacMan extends Controller<MOVE>{
 		
 		//Adding sensor to see if nearest ghost is eatable
 		sensors[29] = new BooleanSensor(OBJ.GHOST_EATABLE, null, 0);
+		
+		//Adding Safe ghost distance sensors                                    
+		sensors[30] = new DistanceSensor(OBJ.GHOST_SAFE, DIR.N, sensorDistance); 
+		sensors[31] = new DistanceSensor(OBJ.GHOST_SAFE, DIR.S, sensorDistance); 
+		sensors[32] = new DistanceSensor(OBJ.GHOST_SAFE, DIR.E, sensorDistance); 
+		sensors[33] = new DistanceSensor(OBJ.GHOST_SAFE, DIR.W, sensorDistance); 
+		sensors[34] = new DistanceSensor(OBJ.GHOST_SAFE, DIR.NE, sensorDistance);
+		sensors[35] = new DistanceSensor(OBJ.GHOST_SAFE, DIR.NW, sensorDistance);
+		sensors[36] = new DistanceSensor(OBJ.GHOST_SAFE, DIR.SE, sensorDistance);
+		sensors[37] = new DistanceSensor(OBJ.GHOST_SAFE, DIR.SW, sensorDistance);
+		                                                                          
+		
 	}
 	
 	public MOVE getMove(Game game, long timeDue) {

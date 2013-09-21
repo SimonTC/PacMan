@@ -1,11 +1,13 @@
 package pacman.entries.pacman.neuralPacMan.sensors;
 
+import java.util.ArrayList;
+
 import pacman.game.Game;
 import pacman.game.Constants.GHOST;
 
 public abstract class Sensor {
 	public enum DIR {N, S, E, W, NE, NW, SE, SW};
-	public enum OBJ {GHOST, PILL, POWERPILL, WALL, GHOSTS_IN_JAIL, GHOST_EATABLE};
+	public enum OBJ {GHOST_SAFE, GHOST_UNSAFE, PILL, POWERPILL, WALL, GHOSTS_IN_JAIL, GHOST_EATABLE};
 	protected OBJ objectToScanFor;
 	protected int east;
 	protected int north;
@@ -30,7 +32,8 @@ public abstract class Sensor {
 		int[] validIndexes;
 		
 		switch(objectToScanFor){
-		case GHOST: objectIndexes = getGhostIndexes(game);
+		case GHOST_UNSAFE: objectIndexes = getGhostIndexes(game, false);
+		case GHOST_SAFE: objectIndexes = getGhostIndexes(game, true);
 		case PILL: objectIndexes = game.getActivePillsIndices();
 		case POWERPILL: objectIndexes = game.getPowerPillIndices();
 		default: objectIndexes = new int[0]; 
@@ -70,21 +73,32 @@ public abstract class Sensor {
 		return (number >= bound1 && number <= bound2) ||(number >= bound2 && number <= bound1) ;
 	}
 	
-	/*
-	 * Scans it's sensor area and returns a double based on the items in the area
-	 */
-	
-	
-	private int[] getGhostIndexes(Game game){
-		int[] arr = new int[4];
-		int i = 0;
-		for (GHOST g : GHOST.values()){
-			arr[i] = game.getGhostCurrentNodeIndex(g);
-			i++;
+	private int[] getGhostIndexes(Game game, boolean safe){
+		ArrayList<Integer> tmp = new ArrayList<>();
+
+		if (safe){
+			for (GHOST g : GHOST.values()){
+				if (game.getGhostEdibleTime(g) > 5){
+					tmp.add( game.getGhostCurrentNodeIndex(g));
+				}
+			}
+		} else {
+			for (GHOST g : GHOST.values()){
+				if (game.getGhostEdibleTime(g) < 5){
+					tmp.add( game.getGhostCurrentNodeIndex(g));
+				}
+			}
+		}
+		int[] arr = new int[tmp.size()];
+		for (int i = 0; i < tmp.size(); i++){
+			arr[i] = tmp.get(i);
 		}
 		return arr;
 	}
 	
+	/*
+	 * Scans it's sensor area and returns a double based on the items in the area
+	 */
 	protected abstract double getNormalizedSensorValue(int pacManIndex, int[]validIndexes, Game game);
 	
 }

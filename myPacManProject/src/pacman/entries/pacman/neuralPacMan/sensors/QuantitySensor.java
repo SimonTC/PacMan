@@ -13,7 +13,8 @@ public class QuantitySensor extends Sensor {
 		int numOfItemsInLevel = 0;
 		
 		switch (objectToScanFor){
-		case GHOST: numOfItemsInLevel = 4; break;
+		case GHOST_SAFE: numOfItemsInLevel = 4; break;
+		case GHOST_UNSAFE: numOfItemsInLevel = 4; break;
 		case PILL: numOfItemsInLevel = game.getActivePillsIndices().length; break;
 		case POWERPILL: numOfItemsInLevel = game.getActivePowerPillsIndices().length; break;
 		}
