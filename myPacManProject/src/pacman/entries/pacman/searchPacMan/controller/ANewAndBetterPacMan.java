@@ -1,4 +1,4 @@
-package pacman.entries.pacman.myFirstPacMan.controller;
+package pacman.entries.pacman.searchPacMan.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;

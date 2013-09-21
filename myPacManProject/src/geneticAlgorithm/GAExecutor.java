@@ -10,7 +10,7 @@ import java.util.Random;
 import pacman.Executor;
 import pacman.controllers.Controller;
 import pacman.controllers.examples.RandomGhosts;
-import pacman.entries.pacman.myFirstPacMan.controller.ANewAndBetterPacMan;
+import pacman.entries.pacman.searchPacMan.controller.ANewAndBetterPacMan;
 import pacman.game.Game;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;

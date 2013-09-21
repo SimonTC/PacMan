@@ -1,4 +1,4 @@
-package pacman.entries.pacman.myFirstPacMan.genetics;
+package pacman.entries.pacman.searchPacMan.genetics;
 
 import geneticAlgorithm.GAExecutor;
 import geneticAlgorithm.GeneComparator;

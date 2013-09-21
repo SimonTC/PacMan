@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Random;
+
+import dataRecording.DataCollectorController;
 import pacman.controllers.Controller;
 import pacman.controllers.HumanController;
 import pacman.controllers.KeyBoardInput;
@@ -22,7 +24,7 @@ import pacman.controllers.examples.RandomNonRevPacMan;
 import pacman.controllers.examples.RandomPacMan;
 import pacman.controllers.examples.StarterGhosts;
 import pacman.controllers.examples.StarterPacMan;
-import pacman.entries.pacman.myFirstPacMan.controller.ANewAndBetterPacMan;
+import pacman.entries.pacman.searchPacMan.controller.ANewAndBetterPacMan;
 import pacman.game.Game;
 import pacman.game.GameView;
 
@@ -84,6 +86,10 @@ public class Executor
 		exec.runGameTimedRecorded(new HumanController(new KeyBoardInput()),new AggressiveGhosts(),visual,fileName);
 		//exec.replayGame(fileName,visual);
 		 //*/
+		
+		// Collect gameplay data by using the dataRecording package
+		boolean visual=true;
+		exec.runGameTimed(new DataCollectorController(new KeyBoardInput()),new StarterGhosts(),visual);
 	}
 	
     /**

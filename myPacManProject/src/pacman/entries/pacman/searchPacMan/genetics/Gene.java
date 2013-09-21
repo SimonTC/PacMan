@@ -1,9 +1,9 @@
-package pacman.entries.pacman.myFirstPacMan.genetics;
+package pacman.entries.pacman.searchPacMan.genetics;
 
 import java.util.Random;
 
-import pacman.entries.pacman.myFirstPacMan.genetics.Gene;
-import pacman.entries.pacman.myFirstPacMan.genetics.GeneticAlgorithm;
+import pacman.entries.pacman.searchPacMan.genetics.Gene;
+import pacman.entries.pacman.searchPacMan.genetics.GeneticAlgorithm;
 
 
 public class Gene {
