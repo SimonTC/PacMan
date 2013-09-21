@@ -24,7 +24,7 @@ import pacman.controllers.examples.RandomNonRevPacMan;
 import pacman.controllers.examples.RandomPacMan;
 import pacman.controllers.examples.StarterGhosts;
 import pacman.controllers.examples.StarterPacMan;
-import pacman.entries.pacman.searchPacMan.controller.SearchPacMan;
+import pacman.entries.pacman.neuralPacMan.NeuralPacMan;
 import pacman.game.Game;
 import pacman.game.GameView;
 
@@ -54,11 +54,11 @@ public class Executor
 		exec.runExperiment(new ANewAndBetterPacMan(),new RandomGhosts(),numTrials);
 		//*/
 		
-		/*
+		///*
 		//run a game in synchronous mode: game waits until controllers respond.
 		int delay=5;
 		boolean visual=true;
-		exec.runGame(new ANewAndBetterPacMan(),new RandomGhosts(),visual,delay);
+		exec.runGame(new NeuralPacMan(100),new RandomGhosts(),visual,delay);
   		// */
 		
 		/*
@@ -85,11 +85,14 @@ public class Executor
 		String fileName="replay - aggresive ghosts.txt";
 		exec.runGameTimedRecorded(new HumanController(new KeyBoardInput()),new AggressiveGhosts(),visual,fileName);
 		//exec.replayGame(fileName,visual);
-		 //*/
+		//*/
 		
+		
+		/*
 		// Collect gameplay data by using the dataRecording package
 		boolean visual=true;
 		exec.runGameTimed(new DataCollectorController(new KeyBoardInput()),new StarterGhosts(),visual);
+		*/
 	}
 	
     /**

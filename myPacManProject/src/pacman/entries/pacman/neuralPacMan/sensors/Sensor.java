@@ -32,33 +32,38 @@ public abstract class Sensor {
 		int[] validIndexes;
 		
 		switch(objectToScanFor){
-		case GHOST_UNSAFE: objectIndexes = getGhostIndexes(game, false);
-		case GHOST_SAFE: objectIndexes = getGhostIndexes(game, true);
-		case PILL: objectIndexes = game.getActivePillsIndices();
-		case POWERPILL: objectIndexes = game.getPowerPillIndices();
+		case GHOST_UNSAFE: objectIndexes = getGhostIndexes(game, false);break;
+		case GHOST_SAFE: objectIndexes = getGhostIndexes(game, true);break;
+		case PILL: objectIndexes = game.getActivePillsIndices();break;
+		case POWERPILL: objectIndexes = game.getPowerPillIndices();break;
 		default: objectIndexes = new int[0]; 
 		}
 		
 		validIndexes = getValidIndexes(objectIndexes, game);
+		
+		if (validIndexes.length==0) {
+			return Double.POSITIVE_INFINITY;
+		}
 
 		return getNormalizedSensorValue(pacManIndex, validIndexes, game);
 	}
 	
 	protected int[] getValidIndexes(int[] objectIndexes,Game game){
-		int [] validIndexes = new int[objectIndexes.length];
+		ArrayList<Integer> tmp = new ArrayList<>();
 
 		int curXCoord = game.getNodeXCood(game.getPacmanCurrentNodeIndex());
 		int curYCoord = game.getNodeYCood(game.getPacmanCurrentNodeIndex());
-		int j = 0;
 		for (int i : objectIndexes){
 			int xCoord = game.getNodeXCood(i);
 			int yCoord = game.getNodeYCood(i);
 			if ( isBetween(xCoord - curXCoord, 0 , north)  && isBetween(yCoord - curYCoord, 0, east)){
-				validIndexes[j] = i;
-				j++;
+				tmp.add(i);
 			}
 		}
-		
+		int [] validIndexes = new int[tmp.size()];
+		for (int j = 0; j < tmp.size(); j++){
+			validIndexes[j] = tmp.get(j);
+		}
 		return validIndexes;
 	}
 	
@@ -78,13 +83,13 @@ public abstract class Sensor {
 
 		if (safe){
 			for (GHOST g : GHOST.values()){
-				if (game.getGhostEdibleTime(g) > 5){
+				if (game.getGhostEdibleTime(g) > 5 && game.getGhostLairTime(g) == 0){
 					tmp.add( game.getGhostCurrentNodeIndex(g));
 				}
 			}
 		} else {
 			for (GHOST g : GHOST.values()){
-				if (game.getGhostEdibleTime(g) < 5){
+				if (game.getGhostEdibleTime(g) < 5 && game.getGhostLairTime(g) == 0){
 					tmp.add( game.getGhostCurrentNodeIndex(g));
 				}
 			}

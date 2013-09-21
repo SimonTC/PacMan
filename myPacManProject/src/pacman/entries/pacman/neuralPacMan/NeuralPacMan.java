@@ -64,10 +64,10 @@ public class NeuralPacMan extends Controller<MOVE>{
 		sensors[27] = new BooleanSensor(OBJ.WALL, DIR.W, 0);
 		
 		//Adding sensor to see if all ghosts are in jail
-		sensors[28] = new BooleanSensor(OBJ.GHOSTS_IN_JAIL, null, 0);
+		sensors[28] = new BooleanSensor(OBJ.GHOSTS_IN_JAIL, DIR.N, 0);
 		
 		//Adding sensor to see if nearest ghost is eatable
-		sensors[29] = new BooleanSensor(OBJ.GHOST_EATABLE, null, 0);
+		sensors[29] = new BooleanSensor(OBJ.GHOST_EATABLE, DIR.N, 0);
 		
 		//Adding Safe ghost distance sensors                                    
 		sensors[30] = new DistanceSensor(OBJ.GHOST_SAFE, DIR.N, sensorDistance); 
@@ -86,6 +86,7 @@ public class NeuralPacMan extends Controller<MOVE>{
 		int pacManIndex = game.getPacmanCurrentNodeIndex();
 		for (int i = 0; i < NUMBER_OF_SENSORS; i++){
 			sensorValues[i] = sensors[i].scan(pacManIndex, game);
+			System.out.println("Sensor " + i + ": " + sensorValues[i]);
 		}
 		return myMove;
 	}
