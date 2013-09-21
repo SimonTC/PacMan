@@ -56,10 +56,15 @@ public abstract class Sensor {
 		for (int i : objectIndexes){
 			int xCoord = game.getNodeXCood(i);
 			int yCoord = game.getNodeYCood(i);
-			if ( isBetween(xCoord - curXCoord, 0 , north)  && isBetween(yCoord - curYCoord, 0, east)){
-				tmp.add(i);
+System.out.println(curXCoord + " " + curYCoord + " " + xCoord + " " + yCoord + " N: " + north + " E: " +  east );
+			//(0,0) in the coordinate system is in the upper left corner.
+			//To calculate the correct distances, curX has to be subtracted from xCoord when calculating x, 
+			//but opposite when calculating y
+			if ( isBetween(curXCoord - xCoord, 0 , north)  && isBetween(yCoord - curYCoord, 0, east)){
+					tmp.add(i);
+				}
 			}
-		}
+		
 		int [] validIndexes = new int[tmp.size()];
 		for (int j = 0; j < tmp.size(); j++){
 			validIndexes[j] = tmp.get(j);

@@ -1282,6 +1282,10 @@ public final class Game
 	 */
 	public double getEuclideanDistance(int fromNodeIndex,int toNodeIndex)
 	{
+		int fromX = currentMaze.graph[fromNodeIndex].x;
+		int toX = currentMaze.graph[toNodeIndex].x;
+		int fromY = currentMaze.graph[fromNodeIndex].y;
+		int toY = currentMaze.graph[toNodeIndex].y;
 		return Math.sqrt(Math.pow(currentMaze.graph[fromNodeIndex].x-currentMaze.graph[toNodeIndex].x,2)+Math.pow(currentMaze.graph[fromNodeIndex].y-currentMaze.graph[toNodeIndex].y,2));
 	}
 	

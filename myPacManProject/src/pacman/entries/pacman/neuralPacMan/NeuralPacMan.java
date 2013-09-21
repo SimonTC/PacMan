@@ -1,5 +1,7 @@
 package pacman.entries.pacman.neuralPacMan;
 
+import java.awt.Color;
+
 import pacman.controllers.Controller;
 import pacman.entries.pacman.neuralPacMan.sensors.DistanceSensor;
 import pacman.entries.pacman.neuralPacMan.sensors.QuantitySensor;
@@ -9,6 +11,7 @@ import pacman.entries.pacman.neuralPacMan.sensors.Sensor.DIR;
 import pacman.entries.pacman.neuralPacMan.sensors.Sensor.OBJ;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
+import pacman.game.GameView;
 
 /*
  * This is the class you need to modify for your entry. In particular, you need to
@@ -83,11 +86,15 @@ public class NeuralPacMan extends Controller<MOVE>{
 	}
 	
 	public MOVE getMove(Game game, long timeDue) {
+	
+		
 		int pacManIndex = game.getPacmanCurrentNodeIndex();
 		for (int i = 0; i < NUMBER_OF_SENSORS; i++){
 			sensorValues[i] = sensors[i].scan(pacManIndex, game);
 			System.out.println("Sensor " + i + ": " + sensorValues[i]);
 		}
+		
+
 		return myMove;
 	}
 	
