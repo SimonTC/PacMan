@@ -3,6 +3,8 @@ package pacman.entries.pacman.neuralPacMan;
 import java.awt.Color;
 
 import pacman.controllers.Controller;
+import pacman.entries.pacman.neuralPacMan.nodes.HiddenLayerNode;
+import pacman.entries.pacman.neuralPacMan.nodes.Node;
 import pacman.entries.pacman.neuralPacMan.nodes.sensors.BooleanSensor;
 import pacman.entries.pacman.neuralPacMan.nodes.sensors.DistanceSensor;
 import pacman.entries.pacman.neuralPacMan.nodes.sensors.QuantitySensor;
@@ -20,16 +22,38 @@ import pacman.game.GameView;
  */
 public class NeuralPacMan extends Controller<MOVE>{
 	private final int NUMBER_OF_SENSORS = 38;
+	private final int NUMBER_OF_HIDDEN_NODES = 4;
+	private final int NUMBER_OF_OUTPUT_NODES = 4;
 	private Sensor[] sensors = new Sensor[NUMBER_OF_SENSORS];
+	private Node[] hiddenNodes = new Node[NUMBER_OF_HIDDEN_NODES];
+	private Node[] outputNodes = new Node[NUMBER_OF_OUTPUT_NODES];
+	
 	private double[] sensorValues = new double[NUMBER_OF_SENSORS];
 	
 	private MOVE myMove=MOVE.NEUTRAL;
 	
 	public NeuralPacMan(int sensorDistance){
-		addSensors(sensorDistance);		
+		addSensors(sensorDistance);	
+		addHiddenNodes();
+		addOutputNodes();
 	}
 	
-	private void addSensors(int sensorDistance){
+	private void addHiddenNodes(){
+		for (int i = 0; i < NUMBER_OF_HIDDEN_NODES; i++){
+			Node n = new HiddenLayerNode(sensors);
+			hiddenNodes[i] = n;			
+		}
+	}
+	
+	private void addOutputNodes(){
+		for (int i = 0; i < NUMBER_OF_OUTPUT_NODES; i++){
+			Node n = new HiddenLayerNode(hiddenNodes);
+			outputNodes[i] = n;			
+		}
+	}
+	
+	
+ 	private void addSensors(int sensorDistance){
 		//Adding Unsafe ghost distance sensors
 		sensors[0] = new DistanceSensor(OBJ.GHOST_UNSAFE, DIR.N, sensorDistance);
 		sensors[1] = new DistanceSensor(OBJ.GHOST_UNSAFE, DIR.S, sensorDistance);
@@ -85,19 +109,48 @@ public class NeuralPacMan extends Controller<MOVE>{
 		
 	}
 	
-	public MOVE getMove(Game game, long timeDue) {
-	
-		
+	public MOVE getMove(Game game, long timeDue) {		
 		int pacManIndex = game.getPacmanCurrentNodeIndex();
-		for (int i = 0; i < NUMBER_OF_SENSORS; i++){
-			sensorValues[i] = sensors[i].scan(pacManIndex, game);
-			System.out.println("Sensor " + i + ": " + sensorValues[i]);
-		}
+		float maxValue = Float.NEGATIVE_INFINITY;
+		int maxIndex = -1;
 		
-
+		for (int i = 0; i < NUMBER_OF_OUTPUT_NODES; i++){
+			float value = outputNodes[i].value(pacManIndex, game);
+			if ( value >maxValue){
+				maxValue = value;
+				maxIndex = i;
+			}
+		}		
+		
+		switch (maxIndex){
+		case 0: myMove = MOVE.UP; break;
+		case 1: myMove = MOVE.DOWN; break;
+		case 2: myMove = MOVE.LEFT; break;
+		case 3: myMove = MOVE.RIGHT; break;
+		}
+		printAllNodes(pacManIndex, game);
+		System.out.println("Max index: " + maxIndex + " Move: " + myMove);
 		return myMove;
 	}
 	
+	private void printNodeValues(Node[] nodeList, int pacManIndex, Game game){
+		for (int i = 0; i < nodeList.length; i++){
+			System.out.println("Node " + i + ": " + nodeList[i].value(pacManIndex, game));
+		}
+		
+	}
+	
+	private void printAllNodes(int pacManIndex, Game game){
+		System.out.println("Sensor values:");
+		printNodeValues(sensors, pacManIndex, game);
+		System.out.println();
+		System.out.println("Hidden layer values:");
+		printNodeValues(hiddenNodes, pacManIndex, game);
+		System.out.println();
+		System.out.println("Output values:");
+		printNodeValues(outputNodes, pacManIndex, game);
+
+	}
 	public double[] getSensorValues(){
 		return sensorValues;
 	}

@@ -17,7 +17,6 @@ public class DistanceSensor extends Sensor {
 			dist = numberOfNodesInLevel;
 		} else {
 			dist = game.getEuclideanDistance(pacManIndex, closestIndex); 
-			System.out.println("dist: " + dist);
 		}		 
 		return normalizeDistance(dist, numberOfNodesInLevel);	
 	}

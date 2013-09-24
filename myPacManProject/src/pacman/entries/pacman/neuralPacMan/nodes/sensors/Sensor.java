@@ -2,10 +2,11 @@ package pacman.entries.pacman.neuralPacMan.nodes.sensors;
 
 import java.util.ArrayList;
 
+import pacman.entries.pacman.neuralPacMan.nodes.Node;
 import pacman.game.Game;
 import pacman.game.Constants.GHOST;
 
-public abstract class Sensor {
+public abstract class Sensor implements Node {
 	public enum DIR {N, S, E, W, NE, NW, SE, SW};
 	public enum OBJ {GHOST_SAFE, GHOST_UNSAFE, PILL, POWERPILL, WALL, GHOSTS_IN_JAIL, GHOST_EATABLE};
 	protected OBJ objectToScanFor;
@@ -15,6 +16,10 @@ public abstract class Sensor {
 		this.objectToScanFor = objectToScanFor;
 		this.scanDirection = scanDirection;
 		
+	}
+	
+	public float value(int pacManIndex, Game game){
+		return scan( pacManIndex,  game);
 	}
 	
 	protected DIR getSection(int pacmanIndex, int itemIndex, Game game){
@@ -64,7 +69,8 @@ public abstract class Sensor {
 			return DIR.W;
 		}
 	}
-	public float scan(int pacManIndex, Game game) {
+	
+	protected float scan(int pacManIndex, Game game) {
 		int[] objectIndexes;
 		int[] validIndexes = null;
 		
@@ -81,8 +87,10 @@ public abstract class Sensor {
 		
 		validIndexes = getValidIndexes(objectIndexes, game);
 		
-		if (validIndexes.length==0) {
-			return Float.POSITIVE_INFINITY;
+		if (validIndexes.length==0 && objectToScanFor == OBJ.PILL) {
+			return 0.0f;
+		} else if (validIndexes.length==0 && objectToScanFor != OBJ.PILL){
+			return 1;
 		}
 
 		return getNormalizedSensorValue(pacManIndex, validIndexes, game);
