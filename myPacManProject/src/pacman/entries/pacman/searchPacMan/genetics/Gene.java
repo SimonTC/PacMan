@@ -2,6 +2,8 @@ package pacman.entries.pacman.searchPacMan.genetics;
 
 import java.util.Random;
 
+import javax.print.attribute.standard.Chromaticity;
+
 import pacman.entries.pacman.searchPacMan.genetics.Gene;
 import pacman.entries.pacman.searchPacMan.genetics.GeneticAlgorithm;
 
@@ -38,12 +40,16 @@ public class Gene {
         Random rand = new Random();
         mChromosome[0] = rand.nextInt(79) + 20 ; //Max depth
         mChromosome[1] = rand.nextInt(5); //Points for pills
-        mChromosome[2] = 2; //Points for power pills
+        mChromosome[2] = rand.nextInt(2) - 4; //Min points for power pills
         mChromosome[3] = rand.nextInt(21) - 20; //Points for non edible ghosts
         mChromosome[4] = rand.nextInt(10); //Points for edible ghosts
         mChromosome[5] = rand.nextInt(2); //Distance metric
         mChromosome[6] = rand.nextInt(5); //Points for junctions
         mChromosome[7] = rand.nextInt(2); //If memory is used or not
+        mChromosome[8] = rand.nextInt(20); //Minimum distance - used in calculating value of powerpill
+        mChromosome[9] = rand.nextInt(20); //Minimum eadible time - used in calculating value of powerpill
+        mChromosome[10] = rand.nextInt(5) + 5; //Max points for power pills
+        mChromosome[11] = rand.nextInt(5); //Neutral points for power pills
     }
 
     /**
@@ -88,6 +94,7 @@ public class Gene {
     	Random rand = new Random();
     	int selector = rand.nextInt(8);
     	int changeBy = 0;
+    	int currentValue = 0;
     	switch(selector){
     	case 0: 
     		{
@@ -104,13 +111,17 @@ public class Gene {
 		    	mChromosome[1] = mChromosome[1] + changeBy;
 	    	}
     	case 2:
-    		{
-		    	/*
-    			//Power pills
-		    	changeBy = rand.nextInt(5) - 2; 
-		    	mChromosome[2] = mChromosome[2] + changeBy;
-		    	*/
+    		{		    	
+    			//Min value for power pills
+    			currentValue = mChromosome[2];
+	    		changeBy = rand.nextInt(4)-2;
+	    		if (currentValue + changeBy > mChromosome[11]){
+	    			mChromosome[2] = mChromosome[11];
+	    		} else{
+	    			mChromosome[2] += changeBy;
+	    		}		    	
     		}
+    		
     	case 3:
     		{
 	    		//Non edible ghosts
@@ -138,6 +149,51 @@ public class Gene {
 	    	{
 	    		// Use memory
 		        mChromosome[7] = rand.nextInt(2); 
+	    	}
+    	case 8:
+	    	{
+	    		//Minimum distance
+	    		currentValue = mChromosome[8];
+	    		changeBy = rand.nextInt(8)-4;
+	    		if (currentValue + changeBy < 0){
+	    			changeBy = 0;
+	    		}
+	    		mChromosome[8] += changeBy;	    		
+	    	}
+	    	
+    	case 9:
+	    	{
+	    		//Minimum eadible time
+	    		currentValue = mChromosome[9];
+	    		changeBy = rand.nextInt(10)-5;
+	    		if (currentValue + changeBy < 0){
+	    			changeBy = 0;
+	    		}
+	    		mChromosome[9] += changeBy;
+	    	}
+    	case 10:
+	    	{
+	    		//Max points for power pills
+	    		currentValue = mChromosome[10];
+	    		changeBy = rand.nextInt(4)-2;
+	    		if (currentValue + changeBy < mChromosome[11]){
+	    			mChromosome[10] = mChromosome[11];
+	    		} else{
+	    			mChromosome[10] += changeBy;
+	    		}
+	    	}
+    	case 11:
+	    	{
+	    		//Neutral points for power pills
+	    		currentValue = mChromosome[11];
+	    		changeBy = rand.nextInt(4)-2;
+	    		if (currentValue + changeBy < mChromosome[2]){
+	    			mChromosome[11] = mChromosome[2];
+	    		} else if (currentValue + changeBy > mChromosome[10]) {
+	    			mChromosome[11] = mChromosome[10];
+	    		} else{
+	    			mChromosome[11] += changeBy;
+	    		}
 	    	}
     	}
     }

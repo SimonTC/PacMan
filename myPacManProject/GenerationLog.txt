@@ -1,0 +1,1 @@
+Generation: 0	 AvgFitness: 2221.38	 MinFitness: 130.0 (90 0 2 -8 8 0 4 0 )	 MaxFitness: 7143.0 (82 1 2 -8 8 0 0 1 )

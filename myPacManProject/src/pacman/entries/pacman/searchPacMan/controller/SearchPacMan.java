@@ -22,16 +22,19 @@ public class SearchPacMan extends Controller<MOVE>
 	//Parameters
 	private  int MAX_DEPTH; 
 	private  int PILL_VALUE = 1;
-	private  int POWER_PILL_VALUE = 2;
+	private  int MIN_POWER_PILL_VALUE = -2;
 	private  int NONEDIBLE_GHOST_VALUE = -5;
 	private  int EDIBLE_GHOST_VALUE = 5;
 	private  int JUNCTION_VALUE = 0;
 	private  int MIN_DISTANCE = 20;
 	private  int MIN_EADIBLE_TIME = 10;
 	private  DM DISTANCE_METRIC = DM.MANHATTAN;
-	private 	int USE_MEMORY = 1;
+	private  int USE_MEMORY = 1;
 	private Path currentPath = null;
+	private  int MAX_POWER_PILL_VALUE = 5;
+	private  int NEUTRAL_POWER_PILL_VALUE = 0;
 	
+	private  int POWER_PILL_VALUE;
 	
 	private MOVE myMove=MOVE.NEUTRAL;
 	private ArrayList<Path> possiblePaths = new ArrayList<Path>();
@@ -139,18 +142,18 @@ public class SearchPacMan extends Controller<MOVE>
 	private int calculatePowerPillValue (Game game, int pacManIndex, int minDistance, int minEadibleTime){
 		GHOST nearestFreeGhost = getNearestFreeGhost(game, pacManIndex);
 		if (nearestFreeGhost == null){
-			return -2;
+			return MIN_POWER_PILL_VALUE;
 		}
 		double distToNearestGhost = distanceToNearestNonEatableGhost(game);
-//System.out.println("Distance to nearest ghost: " + distToNearestGhost);
+
 		if (distToNearestGhost < minDistance) {
-			return 5;
+			return MAX_POWER_PILL_VALUE;
 		}
 		
 		if (game.getGhostEdibleTime(nearestFreeGhost)< minEadibleTime){
-			return 0;
+			return NEUTRAL_POWER_PILL_VALUE;
 		} else {
-			return -2;
+			return MIN_POWER_PILL_VALUE;
 		}
 	}
 	
@@ -172,7 +175,7 @@ public class SearchPacMan extends Controller<MOVE>
 			int ghostNode = game.getGhostCurrentNodeIndex(ghost);
 			double distToGhost = game.getDistance(pacManIndex, ghostNode, DISTANCE_METRIC);
 			int ghostLairTime = game.getGhostLairTime(ghost);
-			if (distToGhost<distToNearestGhost && game.getGhostLairTime(ghost)==0){
+			if (distToGhost<distToNearestGhost && ghostLairTime==0){
 				distToNearestGhost = distToGhost;
 				nearestGhost = ghost;
 			}
@@ -208,13 +211,16 @@ public class SearchPacMan extends Controller<MOVE>
 				MAX_DEPTH = 100;
 			}
 			PILL_VALUE = input.nextInt();
-			POWER_PILL_VALUE = input.nextInt();
+			MIN_POWER_PILL_VALUE = input.nextInt();
 			NONEDIBLE_GHOST_VALUE = input.nextInt();
 			EDIBLE_GHOST_VALUE = input.nextInt();
 			DISTANCE_METRIC = parseDistanceMetric(input.nextInt());
 			JUNCTION_VALUE = input.nextInt();
 			USE_MEMORY = input.nextInt();
-			
+			MIN_DISTANCE = input.nextInt();
+			MIN_EADIBLE_TIME = input.nextInt();
+			MAX_POWER_PILL_VALUE = input.nextInt();
+			NEUTRAL_POWER_PILL_VALUE = input.nextInt();			
 		}
 	}
 	

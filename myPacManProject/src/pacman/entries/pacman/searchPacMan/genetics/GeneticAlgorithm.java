@@ -19,7 +19,7 @@ import pacman.Executor;
 public class GeneticAlgorithm {
     // --- constants
     static int POPULATION_SIZE=50;
-    static int CHROMOSOME_SIZE = 8;
+    static int CHROMOSOME_SIZE = 12;
     static int MAX_GENERATIONS = 200;
     static int NUMBER_OF_TRIALS = 10;
     // --- variables:
@@ -112,6 +112,12 @@ public class GeneticAlgorithm {
 		return null;
     }
     
+    /**
+     * Fitness is only calculated from scores that are less than 1 StdDev bigger than 
+     * the average.
+     * @param filename
+     * @return The adapted average score
+     */
     private double getFitnessFromFile (String filename){
     	String values = getInfoFromFile(filename);
     	String[] arrValues = values.split("\t");
@@ -126,8 +132,19 @@ public class GeneticAlgorithm {
     		stdDev += Math.pow(Double.parseDouble(arrValues[i]) - avgScore,2);
     	}
     	stdDev = Math.sqrt(((double)1/(arrValues.length-1))* stdDev);
+    	
+    	//Removing results more than 1 stdDev bigger than average
+    	double newTotalScore = totalScore;
+    	int newNumberOfTrials = arrValues.length;
+    	for (int i = 0; i < arrValues.length; i++){
+    		double score = Double.parseDouble(arrValues[i]);
+    		if (score > avgScore + stdDev){
+    			newTotalScore = newTotalScore - score;
+    			newNumberOfTrials--;
+    		}
+    	}
     	//double result = avgScore / stdDev; //AvgScore / StdDev doesn't give a good indication
-    	double result = avgScore;
+    	double result = (double) newTotalScore / newNumberOfTrials;
     	return result;
     }
     
@@ -205,8 +222,11 @@ public class GeneticAlgorithm {
     public static void main( String[] args ){
         // Initializing the population (we chose 500 genes for the population,
         // but you can play with the population size to try different approaches)
-   //GeneticAlgorithm population = new GeneticAlgorithm(POPULATION_SIZE);
-        GeneticAlgorithm population = new GeneticAlgorithm("Population Seed");
+   
+    	
+    	GeneticAlgorithm population = new GeneticAlgorithm(POPULATION_SIZE);
+        //GeneticAlgorithm population = new GeneticAlgorithm("Population Seed");
+        
         int generationCount = 0;
         // For the sake of this sample, evolution goes on forever.
         // If you wish the evolution to halt (for instance, after a number of
