@@ -45,6 +45,29 @@ public class GeneticAlgorithm {
             mPopulation.add(entry);
         }
     }
+    
+    public GeneticAlgorithm(String seedFileName){
+       mPopulation = new ArrayList<Gene>();
+       File file = new File(seedFileName + ".txt");
+       Scanner input;
+	try {
+		input = new Scanner(file);
+		do {
+	    	   String values = input.nextLine();
+	    	   String[] arrValues = values.split(" ");
+	    	   Gene entry = new Gene();
+	    	   for (int i = 0; i < arrValues.length; i++){
+	    		   int value = Integer.parseInt(arrValues[i]);
+	    		   entry.setChromosomeElement(i, value);
+	    	   }
+	    	   mPopulation.add(entry);
+	       } while (input.hasNextLine());
+	} catch (FileNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+       
+    }
     /**
      * For all members of the population, runs a heuristic that evaluates their fitness
      * based on their phenotype. The evaluation of this problem's phenotype is fairly simple,
@@ -182,7 +205,8 @@ public class GeneticAlgorithm {
     public static void main( String[] args ){
         // Initializing the population (we chose 500 genes for the population,
         // but you can play with the population size to try different approaches)
-        GeneticAlgorithm population = new GeneticAlgorithm(POPULATION_SIZE);
+   //GeneticAlgorithm population = new GeneticAlgorithm(POPULATION_SIZE);
+        GeneticAlgorithm population = new GeneticAlgorithm("Population Seed");
         int generationCount = 0;
         // For the sake of this sample, evolution goes on forever.
         // If you wish the evolution to halt (for instance, after a number of
