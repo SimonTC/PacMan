@@ -8,7 +8,7 @@ import pacman.game.Game;
 public class BooleanSensor extends Sensor {
 
 	public BooleanSensor(OBJ objectToScanFor, DIR scanDirection,  int sensorDistance) {
-		super(objectToScanFor, scanDirection, sensorDistance);
+		super(objectToScanFor, scanDirection);
 		
 	}
 
@@ -17,18 +17,27 @@ public class BooleanSensor extends Sensor {
 		switch (objectToScanFor) {
 		case GHOST_EATABLE: return nearestGhostIsEatable(pacManIndex, game);
 		case GHOSTS_IN_JAIL: return allGhostsAreInJail(game);
-		case WALL: return isWall(pacManIndex, game, game.getNodeXCood(pacManIndex), game.getNodeYCood(pacManIndex));
+		case WALL: return isWall(pacManIndex, game);
 		default: return 0;
 		}
 	}
-	
-	private float isWall( int pacManIndex, Game game, int xCoord, int yCoord){
+	/*
+	 * Testing if there is a wall in the direction of the sensor.
+	 * Using the fact that getNeighbouringNodes only returns nodes which is
+	 * accessible (== not walls)
+	 */
+	private float isWall( int pacManIndex, Game game){
 		int[] neighbours = game.getNeighbouringNodes(pacManIndex);
+		int pX = game.getNodeXCood(pacManIndex);
+		int pY = game.getNodeYCood(pacManIndex);
 		for (int i: neighbours){
 			int x = game.getNodeXCood(i);
 			int y = game.getNodeYCood(i);
-			if (x == xCoord + north && y == yCoord + east){
-				return 0;
+			switch (scanDirection){
+			case N: if (pX - 1 == x){return 0;}; break;
+			case S: if (pX + 1 == x){return 0;}; break;
+			case E: if (pY + 1 == y){return 0;}; break;
+			case W: if (pY - 1 == y){return 0;}; break;
 			}
 		}
 		

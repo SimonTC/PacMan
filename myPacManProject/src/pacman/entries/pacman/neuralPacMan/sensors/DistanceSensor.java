@@ -5,7 +5,7 @@ import pacman.game.Game;
 
 public class DistanceSensor extends Sensor {
 	public DistanceSensor(OBJ objectToScanFor, DIR scanDirection, int sensorDistance) {
-		super(objectToScanFor, scanDirection, sensorDistance);		
+		super(objectToScanFor, scanDirection);		
 	}
 
 	@Override

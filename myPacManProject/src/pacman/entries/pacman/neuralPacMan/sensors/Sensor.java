@@ -9,24 +9,61 @@ public abstract class Sensor {
 	public enum DIR {N, S, E, W, NE, NW, SE, SW};
 	public enum OBJ {GHOST_SAFE, GHOST_UNSAFE, PILL, POWERPILL, WALL, GHOSTS_IN_JAIL, GHOST_EATABLE};
 	protected OBJ objectToScanFor;
-	protected int east;
-	protected int north;
+	protected DIR scanDirection;
 	
-	public Sensor(OBJ objectToScanFor, DIR scanDirection, int sensorDistance){
+	public Sensor(OBJ objectToScanFor, DIR scanDirection){
 		this.objectToScanFor = objectToScanFor;
+		this.scanDirection = scanDirection;
 		
-		switch (scanDirection){
-		case N: east = 0 ; north = 0 - sensorDistance; break;
-		case S: east = 0 ; north = 0 + sensorDistance; break;
-		case E: east = 0 + sensorDistance ; north = 0 ; break;
-		case W: east = 0 - sensorDistance; north = 0 ; break;
-		case NE: east = 0 + sensorDistance ; north = 0 + sensorDistance; break;
-		case NW: east = 0 - sensorDistance ; north = 0 + sensorDistance; break;
-		case SE: east = 0 + sensorDistance ; north = 0 - sensorDistance; break;
-		case SW: east = 0 - sensorDistance ; north = 0 - sensorDistance; break;
-		}
 	}
 	
+	protected DIR getSection(int pacmanIndex, int itemIndex, Game game){
+		boolean N =false;
+		boolean E = false;
+		boolean straightX = false;
+		boolean straightY = false;
+		int pX, pY, iX, iY;
+		
+		pX = game.getNodeXCood(pacmanIndex);
+		pY= game.getNodeYCood(pacmanIndex);
+		iX = game.getNodeXCood(itemIndex);
+		iY = game.getNodeYCood(itemIndex);
+		
+		if (pX > iX){
+			E = false;
+		}else if (pX < iX){
+			E = true;
+		} else {
+			straightX = true;
+		}
+		
+		if (pY > iY){
+			N = true;
+		} else if (pY < iY){
+			N = false;
+		} else{
+			straightY = true;
+		}
+		
+		if (N && E){
+			return DIR.NE;
+		}else if (N && !E) {
+			return DIR.NW;
+		} else if (!N && E){
+			return DIR.SE;
+		} else if (!N && !E){
+			return DIR.SW;
+		} else if (straightX && N){
+			return DIR.N;
+		}else if (straightX && !N){
+			return DIR.S;
+		}else if (straightY && E){
+			return DIR.E;
+		}else {
+			// if (straightY && !E)
+			return DIR.W;
+		}
+	}
 	public float scan(int pacManIndex, Game game) {
 		int[] objectIndexes;
 		int[] validIndexes;
@@ -50,17 +87,10 @@ public abstract class Sensor {
 	
 	protected int[] getValidIndexes(int[] objectIndexes,Game game){
 		ArrayList<Integer> tmp = new ArrayList<>();
-
-		int curXCoord = game.getNodeXCood(game.getPacmanCurrentNodeIndex());
-		int curYCoord = game.getNodeYCood(game.getPacmanCurrentNodeIndex());
+		int pacManIndex = game.getPacmanCurrentNodeIndex();
+		
 		for (int i : objectIndexes){
-			int xCoord = game.getNodeXCood(i);
-			int yCoord = game.getNodeYCood(i);
-System.out.println(curXCoord + " " + curYCoord + " " + xCoord + " " + yCoord + " N: " + north + " E: " +  east );
-			//(0,0) in the coordinate system is in the upper left corner.
-			//To calculate the correct distances, curX has to be subtracted from xCoord when calculating x, 
-			//but opposite when calculating y
-			if ( isBetween(curXCoord - xCoord, 0 , north)  && isBetween(yCoord - curYCoord, 0, east)){
+			if ( getSection(pacManIndex, i, game) == this.scanDirection ){
 					tmp.add(i);
 				}
 			}
