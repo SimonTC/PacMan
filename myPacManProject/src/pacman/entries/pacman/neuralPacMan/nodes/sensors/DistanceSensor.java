@@ -1,4 +1,4 @@
-package pacman.entries.pacman.neuralPacMan.sensors;
+package pacman.entries.pacman.neuralPacMan.nodes.sensors;
 
 import pacman.game.Constants.DM;
 import pacman.game.Game;

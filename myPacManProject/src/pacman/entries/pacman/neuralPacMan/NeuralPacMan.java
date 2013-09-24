@@ -3,12 +3,12 @@ package pacman.entries.pacman.neuralPacMan;
 import java.awt.Color;
 
 import pacman.controllers.Controller;
-import pacman.entries.pacman.neuralPacMan.sensors.DistanceSensor;
-import pacman.entries.pacman.neuralPacMan.sensors.QuantitySensor;
-import pacman.entries.pacman.neuralPacMan.sensors.BooleanSensor;
-import pacman.entries.pacman.neuralPacMan.sensors.Sensor;
-import pacman.entries.pacman.neuralPacMan.sensors.Sensor.DIR;
-import pacman.entries.pacman.neuralPacMan.sensors.Sensor.OBJ;
+import pacman.entries.pacman.neuralPacMan.nodes.sensors.BooleanSensor;
+import pacman.entries.pacman.neuralPacMan.nodes.sensors.DistanceSensor;
+import pacman.entries.pacman.neuralPacMan.nodes.sensors.QuantitySensor;
+import pacman.entries.pacman.neuralPacMan.nodes.sensors.Sensor;
+import pacman.entries.pacman.neuralPacMan.nodes.sensors.Sensor.DIR;
+import pacman.entries.pacman.neuralPacMan.nodes.sensors.Sensor.OBJ;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 import pacman.game.GameView;
