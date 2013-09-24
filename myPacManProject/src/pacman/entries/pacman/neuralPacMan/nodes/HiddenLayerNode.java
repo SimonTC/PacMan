@@ -34,7 +34,7 @@ public class HiddenLayerNode implements Node {
 	}
 	
 	private float sigmoidValue (float value){
-		float result = (float) (1/(1+Math.pow(Math.E, (double)value)));
+		float result = (float) (1/(1+Math.pow(Math.E, (double)-value)));
 		return (float) result;
 	}
 
