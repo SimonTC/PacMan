@@ -16,8 +16,8 @@ public abstract class Sensor {
 		this.objectToScanFor = objectToScanFor;
 		
 		switch (scanDirection){
-		case N: east = 0 ; north = 0 + sensorDistance; break;
-		case S: east = 0 ; north = 0 - sensorDistance; break;
+		case N: east = 0 ; north = 0 - sensorDistance; break;
+		case S: east = 0 ; north = 0 + sensorDistance; break;
 		case E: east = 0 + sensorDistance ; north = 0 ; break;
 		case W: east = 0 - sensorDistance; north = 0 ; break;
 		case NE: east = 0 + sensorDistance ; north = 0 + sensorDistance; break;
