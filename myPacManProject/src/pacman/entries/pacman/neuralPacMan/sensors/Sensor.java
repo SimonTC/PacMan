@@ -45,13 +45,13 @@ public abstract class Sensor {
 			straightY = true;
 		}
 		
-		if (N && E){
+		if (N && E && !straightY && !straightX){
 			return DIR.NE;
-		}else if (N && !E) {
+		}else if (N && !E && !straightY && !straightX) {
 			return DIR.NW;
-		} else if (!N && E){
+		} else if (!N && E && !straightY && !straightX){
 			return DIR.SE;
-		} else if (!N && !E){
+		} else if (!N && !E && !straightY && !straightX){
 			return DIR.SW;
 		} else if (straightX && N){
 			return DIR.N;
@@ -66,13 +66,16 @@ public abstract class Sensor {
 	}
 	public float scan(int pacManIndex, Game game) {
 		int[] objectIndexes;
-		int[] validIndexes;
+		int[] validIndexes = null;
 		
 		switch(objectToScanFor){
 		case GHOST_UNSAFE: objectIndexes = getGhostIndexes(game, false);break;
 		case GHOST_SAFE: objectIndexes = getGhostIndexes(game, true);break;
 		case PILL: objectIndexes = game.getActivePillsIndices();break;
 		case POWERPILL: objectIndexes = game.getPowerPillIndices();break;
+		case GHOST_EATABLE : return getNormalizedSensorValue(pacManIndex, validIndexes, game);
+		case GHOSTS_IN_JAIL : return getNormalizedSensorValue(pacManIndex, validIndexes, game);
+		case WALL: return getNormalizedSensorValue(pacManIndex, validIndexes, game);
 		default: objectIndexes = new int[0]; 
 		}
 		

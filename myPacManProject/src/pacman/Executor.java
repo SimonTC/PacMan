@@ -55,18 +55,18 @@ public class Executor
 		exec.runExperiment(new ANewAndBetterPacMan(),new RandomGhosts(),numTrials);
 		//*/
 		
-		/*
+		//*
 		//run a game in synchronous mode: game waits until controllers respond.
 		int delay=5;
 		boolean visual=true;
-		exec.runGame(new SearchPacMan(80),new RandomGhosts(),visual,delay);
+		exec.runGame(new NeuralPacMan(40),new RandomGhosts(),visual,delay);
   		// */
 		
-		///*
+		/*
 		//run the game in asynchronous mode.
 		boolean visual=true;
 //		exec.runGameTimed(new NearestPillPacMan(),new AggressiveGhosts(),visual);
-		exec.runGameTimed(new SearchPacMan(80),new StarterGhosts(),visual);
+		exec.runGameTimed(new NeuralPacMan(40),new StarterGhosts(),visual);
 //		exec.runGameTimed(new HumanController(new KeyBoardInput()),new StarterGhosts(),visual);	
 		//*/
 		

@@ -24,7 +24,8 @@ public class QuantitySensor extends Sensor {
 	
 	public float normalizeNumberOfItems(int numOfItemsInArea, int numOfItemsInLevel)
 	{
-		return (float)((numOfItemsInArea-0)/(numOfItemsInLevel-0))*(1-0)+0;
+		float result = (((float)numOfItemsInArea-0)/((float)numOfItemsInLevel-0)*(1-0)+0);
+		return result;
 	}
 
 }

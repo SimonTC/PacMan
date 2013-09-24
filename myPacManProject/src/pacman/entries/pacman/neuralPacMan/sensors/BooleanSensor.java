@@ -34,10 +34,10 @@ public class BooleanSensor extends Sensor {
 			int x = game.getNodeXCood(i);
 			int y = game.getNodeYCood(i);
 			switch (scanDirection){
-			case N: if (pX - 1 == x){return 0;}; break;
-			case S: if (pX + 1 == x){return 0;}; break;
-			case E: if (pY + 1 == y){return 0;}; break;
-			case W: if (pY - 1 == y){return 0;}; break;
+			case N: if (pY - 1 == y){return 0;}; break;
+			case S: if (pY + 1 == y){return 0;}; break;
+			case E: if (pX + 1 == x){return 0;}; break;
+			case W: if (pX - 1 == x){return 0;}; break;
 			}
 		}
 		
