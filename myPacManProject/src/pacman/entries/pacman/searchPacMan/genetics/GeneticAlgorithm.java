@@ -164,8 +164,7 @@ public class GeneticAlgorithm {
     	*/
     	GeneComparator gComp = new GeneComparator();
     	Collections.sort(mPopulation, gComp);
-    	
-    	ArrayList<Gene> mNextGeneration = new ArrayList<Gene>();
+      	ArrayList<Gene> mNextGeneration = new ArrayList<Gene>();
     	//Mate 20 % best genes
     	int numParents = (int) (mPopulation.size() * 0.2);
     	for (int i = 1; i<numParents + 1; i = i +2){
@@ -182,7 +181,7 @@ public class GeneticAlgorithm {
     	}
     	
     	//Remove 20 % worst
-    	int numToDie = (int) (mPopulation.size() * 0.2);
+    	int numToDie = numParents;
     	for (int i = 0 ; i < numToDie; i++){
     		mPopulation.remove(i);
     	}
@@ -261,9 +260,9 @@ public class GeneticAlgorithm {
             }
             if(population.size()>0){ avgFitness = avgFitness/population.size(); }
             String output = "Generation: " + generationCount;
-            output += "\t AvgFitness: " + avgFitness;
-            output += "\t MinFitness: " + minFitness + " (" + worstIndividual +")";
-            output += "\t MaxFitness: " + maxFitness + " (" + bestIndividual +")";
+            output += "\t AvgFitness: " + (int) avgFitness;
+            output += "\t MinFitness: " + (int) minFitness + " (" + worstIndividual +")";
+            output += "\t MaxFitness: " + (int) maxFitness + " (" + bestIndividual +")";
             System.out.println(output);
             population.writeToGenerationLog(output);
             writePopulationToLog(wholeGeneration, generationCount);
