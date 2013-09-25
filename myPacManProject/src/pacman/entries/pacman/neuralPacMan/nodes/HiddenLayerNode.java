@@ -41,7 +41,7 @@ public class HiddenLayerNode extends MasterNode {
 	public String getWeights(){
 		String result = "";
 		for (int i = 0; i < inputNodes.length; i++){
-			result += this.getName() + "," + inputNodes[i] + "," + inputWeights[i] + ";";
+			result += this.getName() + "," + inputNodes[i].getName() + "," + inputWeights[i] + ";";
 		}
 		return result;
 			

@@ -48,7 +48,7 @@ public class Executor
 	public static void main(String[] args)
 	{
 		Executor exec=new Executor();
-
+		
 		/*
 		//run multiple games in batch mode - good for testing.
 		int numTrials=20;
