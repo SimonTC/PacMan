@@ -2,6 +2,7 @@ package dataRecording;
 
 import pacman.controllers.*;
 import pacman.entries.pacman.neuralPacMan.NeuralPacMan;
+import pacman.entries.pacman.searchPacMan.controller.SearchPacMan;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Game;
@@ -32,7 +33,7 @@ public class DataCollectorController extends HumanController{
 
 }
 */
-public class DataCollectorController extends NeuralPacMan{
+public class DataCollectorController extends SearchPacMan{
 	
 	public DataCollectorController(){
 		super(0);

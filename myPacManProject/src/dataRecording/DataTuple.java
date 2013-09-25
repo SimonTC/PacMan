@@ -1,6 +1,7 @@
 package dataRecording;
 
 import pacman.entries.pacman.neuralPacMan.NeuralPacMan;
+import pacman.entries.pacman.searchPacMan.controller.SearchPacMan;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
@@ -27,7 +28,21 @@ public class DataTuple implements Comparable<DataTuple> {
 		this.distanceToNearestPowerPill  = sensorValues[2];
 		
 	}
-	
+	public DataTuple(Game game, MOVE move, SearchPacMan pacMan)
+	{
+		if(move == MOVE.NEUTRAL)
+		{
+			move = game.getPacmanLastMoveMade();
+		}
+		
+		this.DirectionChosen = move;
+		
+		double[] sensorValues = pacMan.getSensorValues();
+		this.distanceToNearestGhost = sensorValues[0];
+		this.nearestGhostEdible  = sensorValues[1];
+		this.distanceToNearestPowerPill  = sensorValues[2];
+		
+	}
 	public DataTuple(String data)
 	{
 		String[] dataSplit = data.split(";");

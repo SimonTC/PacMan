@@ -78,12 +78,6 @@ public class SearchPacMan extends Controller<MOVE>
 		int maxDepth = MAX_DEPTH;
 		int pacManIndex = game.getPacmanCurrentNodeIndex();
 		
-		//reading sensor values (Used in training)
-		for (int i = 0; i < NUMBER_OF_SENSORS; i++){
-			double value = sensors[i].value(pacManIndex, game);
-			sensorValues[i] = (long) (value * 10000 + 0.5) / 10000.0;
-		}
-		
 		if (pacManIndex == game.getCurrentMaze().initialPacManNodeIndex){
 			currentPath = null;
 		}
@@ -109,6 +103,13 @@ public class SearchPacMan extends Controller<MOVE>
 		if (USE_MEMORY==1){
 			currentPath = optimalPath;
 		}
+		
+		//reading sensor values (Used in training)
+		for (int i = 0; i < NUMBER_OF_SENSORS; i++){
+			double value = sensors[i].value(pacManIndex, game);
+			sensorValues[i] = (long) (value * 10000 + 0.5) / 10000.0;
+		}
+		
 		return myMove;
 	}
 	/*
