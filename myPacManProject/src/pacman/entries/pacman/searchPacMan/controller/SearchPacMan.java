@@ -7,6 +7,10 @@ import java.util.Random;
 import java.util.Scanner;
 
 import pacman.controllers.Controller;
+import pacman.entries.pacman.neuralPacMan.nodes.sensors.BooleanSensor;
+import pacman.entries.pacman.neuralPacMan.nodes.sensors.DistanceSensor;
+import pacman.entries.pacman.neuralPacMan.nodes.sensors.Sensor;
+import pacman.entries.pacman.neuralPacMan.nodes.sensors.Sensor.OBJ;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -19,6 +23,11 @@ import pacman.game.Game;
  */
 public class SearchPacMan extends Controller<MOVE>
 {
+	//Recording equipment
+	private final int NUMBER_OF_SENSORS = 3;
+	private Sensor[] sensors = new Sensor[NUMBER_OF_SENSORS];
+	private double[] sensorValues = new double[NUMBER_OF_SENSORS];
+	
 	//Parameters
 	private  int MAX_DEPTH; 
 	private  int PILL_VALUE = 1;
@@ -51,6 +60,15 @@ public class SearchPacMan extends Controller<MOVE>
 	 */
 	public SearchPacMan(int depth){
 		MAX_DEPTH = depth; 
+		
+		//Used in recording
+		addSensors(0);	
+	}
+	
+	private void addSensors(int sensorDistance){
+		sensors[0] = new DistanceSensor(OBJ.GHOST);
+		sensors[1] = new BooleanSensor(OBJ.GHOST_EADABLE);
+		sensors[2] = new DistanceSensor (OBJ.POWERPILL);		
 	}
 	
 	public MOVE getMove(Game game, long timeDue) 
@@ -59,6 +77,13 @@ public class SearchPacMan extends Controller<MOVE>
 		possiblePaths.clear();
 		int maxDepth = MAX_DEPTH;
 		int pacManIndex = game.getPacmanCurrentNodeIndex();
+		
+		//reading sensor values (Used in training)
+		for (int i = 0; i < NUMBER_OF_SENSORS; i++){
+			double value = sensors[i].value(pacManIndex, game);
+			sensorValues[i] = (long) (value * 10000 + 0.5) / 10000.0;
+		}
+		
 		if (pacManIndex == game.getCurrentMaze().initialPacManNodeIndex){
 			currentPath = null;
 		}
@@ -261,6 +286,10 @@ public class SearchPacMan extends Controller<MOVE>
 			System.out.print(n.getNodeIndex() + " - ");
 		}
 		System.out.println();
+	}
+	
+	public double[] getSensorValues(){
+		return sensorValues;
 	}
 	
 }
