@@ -4,7 +4,7 @@ import java.util.Random;
 
 import pacman.game.Game;
 
-public class HiddenLayerNode implements Node {
+public class HiddenLayerNode extends MasterNode {
 	Node[] inputNodes;
 	float[] inputWeights;
 	
@@ -36,6 +36,15 @@ public class HiddenLayerNode implements Node {
 	private double sigmoidValue (float value){
 		double result = (double) (1/(1+Math.pow(Math.E, (double)-value)));
 		return (double) result;
+	}
+	
+	public String getWeights(){
+		String result = "";
+		for (int i = 0; i < inputNodes.length; i++){
+			result += this.getName() + "," + inputNodes[i] + "," + inputWeights[i] + ";";
+		}
+		return result;
+			
 	}
 
 }

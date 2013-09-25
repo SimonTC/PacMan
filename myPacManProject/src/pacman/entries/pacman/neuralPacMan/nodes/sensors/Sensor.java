@@ -2,11 +2,12 @@ package pacman.entries.pacman.neuralPacMan.nodes.sensors;
 
 import java.util.ArrayList;
 
+import pacman.entries.pacman.neuralPacMan.nodes.MasterNode;
 import pacman.entries.pacman.neuralPacMan.nodes.Node;
 import pacman.game.Game;
 import pacman.game.Constants.GHOST;
 
-public abstract class Sensor implements Node {
+public abstract class Sensor extends MasterNode {
 	public enum OBJ {GHOST, GHOST_EADABLE, POWERPILL, PILL};
 	protected OBJ objectToScanFor;
 	

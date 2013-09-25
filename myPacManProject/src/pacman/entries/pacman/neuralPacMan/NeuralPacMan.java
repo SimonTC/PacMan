@@ -22,8 +22,8 @@ public class NeuralPacMan extends Controller<MOVE>{
 	private final int NUMBER_OF_HIDDEN_NODES = 4;
 	private final int NUMBER_OF_OUTPUT_NODES = 4;
 	private Sensor[] sensors = new Sensor[NUMBER_OF_SENSORS];
-	private Node[] hiddenNodes = new Node[NUMBER_OF_HIDDEN_NODES];
-	private Node[] outputNodes = new Node[NUMBER_OF_OUTPUT_NODES];
+	private HiddenLayerNode[] hiddenNodes = new HiddenLayerNode[NUMBER_OF_HIDDEN_NODES];
+	private HiddenLayerNode[] outputNodes = new HiddenLayerNode[NUMBER_OF_OUTPUT_NODES];
 	
 	private double[] sensorValues = new double[NUMBER_OF_SENSORS];
 	
@@ -37,14 +37,16 @@ public class NeuralPacMan extends Controller<MOVE>{
 	
 	private void addHiddenNodes(){
 		for (int i = 0; i < NUMBER_OF_HIDDEN_NODES; i++){
-			Node n = new HiddenLayerNode(sensors);
+			HiddenLayerNode n = new HiddenLayerNode(sensors);
+			n.setName("HD" + i);
 			hiddenNodes[i] = n;			
 		}
 	}
 	
 	private void addOutputNodes(){
 		for (int i = 0; i < NUMBER_OF_OUTPUT_NODES; i++){
-			Node n = new HiddenLayerNode(hiddenNodes);
+			HiddenLayerNode n = new HiddenLayerNode(hiddenNodes);
+			n.setName("ON" + i);
 			outputNodes[i] = n;			
 		}
 	}
@@ -53,7 +55,11 @@ public class NeuralPacMan extends Controller<MOVE>{
  	private void addSensors(int sensorDistance){
 		sensors[0] = new DistanceSensor(OBJ.GHOST);
 		sensors[1] = new BooleanSensor(OBJ.GHOST_EADABLE);
-		sensors[2] = new DistanceSensor (OBJ.POWERPILL);		
+		sensors[2] = new DistanceSensor (OBJ.POWERPILL);
+		
+		for (int i = 0; i < sensors.length; i++){
+			sensors[i].setName("S" + i);
+		}
 	}
 	
 	public MOVE getMove(Game game, long timeDue) {		
@@ -160,5 +166,16 @@ public class NeuralPacMan extends Controller<MOVE>{
 	}
 	public double[] getSensorValues(){
 		return sensorValues;
+	}
+	
+	public String getNodeWeights(){
+		String result = "";
+		for (HiddenLayerNode n : outputNodes){
+			result += n.getWeights();
+		}
+		for (HiddenLayerNode n : hiddenNodes){
+			result += n.getWeights();
+		}
+		return result;
 	}
 }

@@ -54,6 +54,8 @@ public class SearchPacMan extends Controller<MOVE>
 		} catch (FileNotFoundException e) {
 			//System.out.println("Bruger standard parametre");
 		}
+		//Used in recording
+		addSensors(0);
 	}
 	/*
 	 * Used when only depth is to be changed
@@ -61,8 +63,7 @@ public class SearchPacMan extends Controller<MOVE>
 	public SearchPacMan(int depth){
 		MAX_DEPTH = depth; 
 		
-		//Used in recording
-		addSensors(0);	
+			
 	}
 	
 	private void addSensors(int sensorDistance){

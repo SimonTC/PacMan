@@ -36,7 +36,7 @@ public class DataCollectorController extends HumanController{
 public class DataCollectorController extends SearchPacMan{
 	
 	public DataCollectorController(){
-		super(0);
+		super();
 	}
 	
 	@Override
