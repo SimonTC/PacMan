@@ -58,11 +58,19 @@ public class NeuralPacMan extends Controller<MOVE>{
 	
 	public MOVE getMove(Game game, long timeDue) {		
 		int pacManIndex = game.getPacmanCurrentNodeIndex();
-		float maxValue = Float.NEGATIVE_INFINITY;
+		double maxValue = Double.NEGATIVE_INFINITY;
 		int maxIndex = -1;
 		
+		//reading sensor values (Used in training)
+		for (int i = 0; i < NUMBER_OF_SENSORS; i++){
+			double value = sensors[i].value(pacManIndex, game);
+			sensorValues[i] = (long) (value * 10000 + 0.5) / 10000.0;
+
+		}	
+		
+		//Reading output values
 		for (int i = 0; i < NUMBER_OF_OUTPUT_NODES; i++){
-			float value = outputNodes[i].value(pacManIndex, game);
+			double value = outputNodes[i].value(pacManIndex, game);
 			if ( value > maxValue){
 				maxValue = value;
 				maxIndex = i;
@@ -79,8 +87,8 @@ public class NeuralPacMan extends Controller<MOVE>{
 		case 2: myMove = game.getNextMoveTowardsTarget(pacManIndex, powerPill, dm); break;
 		case 3: myMove = game.getNextMoveTowardsTarget(pacManIndex, pill, dm); break;
 		}
-		printAllNodes(pacManIndex, game);
-		System.out.println("Max index: " + maxIndex + " Move: " + myMove);
+	//printAllNodes(pacManIndex, game);
+	//System.out.println("Max index: " + maxIndex + " Move: " + myMove);
 		return myMove;
 	}
 	

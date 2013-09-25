@@ -14,11 +14,11 @@ public abstract class Sensor implements Node {
 		this.objectToScanFor = objectToScanFor;
 	}
 	
-	public float value(int pacManIndex, Game game){
+	public double value(int pacManIndex, Game game){
 		return scan( pacManIndex,  game);
 	}
 	
-	protected float scan(int pacManIndex, Game game) {
+	protected double scan(int pacManIndex, Game game) {
 		int[] objectIndexes;
 		
 		switch(objectToScanFor){

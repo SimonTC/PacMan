@@ -23,7 +23,7 @@ public class HiddenLayerNode implements Node {
 	}
 	
 	@Override
-	public float value(int pacManIndex, Game game) {
+	public double value(int pacManIndex, Game game) {
 		float totalInputValue = 0.0f;
 		for (int i = 0; i < inputNodes.length; i++){
 			totalInputValue += inputNodes[i].value(pacManIndex, game) * inputWeights[i];
@@ -33,9 +33,9 @@ public class HiddenLayerNode implements Node {
 		
 	}
 	
-	private float sigmoidValue (float value){
-		float result = (float) (1/(1+Math.pow(Math.E, (double)-value)));
-		return (float) result;
+	private double sigmoidValue (float value){
+		double result = (double) (1/(1+Math.pow(Math.E, (double)-value)));
+		return (double) result;
 	}
 
 }

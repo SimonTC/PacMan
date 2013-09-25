@@ -1,6 +1,7 @@
 package dataRecording;
 
 import pacman.controllers.*;
+import pacman.entries.pacman.neuralPacMan.NeuralPacMan;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Game;
@@ -12,6 +13,7 @@ import pacman.game.Constants.MOVE;
  * @author andershh
  *
  */
+/*
 public class DataCollectorController extends HumanController{
 	
 	public DataCollectorController(KeyBoardInput input){
@@ -23,6 +25,24 @@ public class DataCollectorController extends HumanController{
 		MOVE move = super.getMove(game, dueTime);
 		
 		DataTuple data = new DataTuple(game, move);
+				
+		DataSaverLoader.SavePacManData(data);		
+		return move;
+	}
+
+}
+*/
+public class DataCollectorController extends NeuralPacMan{
+	
+	public DataCollectorController(){
+		super(0);
+	}
+	
+	@Override
+	public MOVE getMove(Game game, long dueTime) {
+		MOVE move = super.getMove(game, dueTime);
+		
+		DataTuple data = new DataTuple(game, move, this);
 				
 		DataSaverLoader.SavePacManData(data);		
 		return move;
