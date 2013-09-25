@@ -10,7 +10,6 @@ public class MontePacMan extends Controller<MOVE>
 	
 	public MOVE getMove(Game game, long timeDue) 
 	{
-		//Place your game logic here to play the game as Ms Pac-Man
 		return myMove;
 	}
 }
