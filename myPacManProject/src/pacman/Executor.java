@@ -59,7 +59,7 @@ public class Executor
 		//run a game in synchronous mode: game waits until controllers respond.
 		int delay=5;
 		boolean visual=true;
-		exec.runGame(new DataCollectorController(),new RandomGhosts(),visual,delay);
+		exec.runGame(new DataCollectorController("trainingData - searchPacMan.txt"),new RandomGhosts(),visual,delay);
   		// */
 		
 		/*

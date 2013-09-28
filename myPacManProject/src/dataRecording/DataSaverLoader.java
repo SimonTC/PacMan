@@ -10,16 +10,20 @@ import pacman.game.util.*;
  */
 public class DataSaverLoader {
 	
-	private static String FileName = "trainingData.txt";
+	private String fileName;
 	
-	public static void SavePacManData(DataTuple data)
-	{
-		IO.saveFile(FileName, data.getSaveString(), true);
+	public DataSaverLoader(String fileName){
+		this.fileName = fileName;
 	}
 	
-	public static DataTuple[] LoadPacManData()
+	public void SavePacManData(DataTuple data)
 	{
-		String data = IO.loadFile(FileName);
+		IO.saveFile(fileName, data.getSaveString(), true);
+	}
+	
+	public DataTuple[] LoadPacManData()
+	{
+		String data = IO.loadFile(fileName);
 		String[] dataLine = data.split("\n");
 		DataTuple[] dataTuples = new DataTuple[dataLine.length];
 		

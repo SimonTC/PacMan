@@ -86,6 +86,7 @@ public class NeuralPacMan extends Controller<MOVE>{
 		int ghostIndex = nearestItemIndex(game, pacManIndex, OBJ.GHOST);
 		int pill = nearestItemIndex(game, pacManIndex, OBJ.PILL);
 		int powerPill = nearestItemIndex(game, pacManIndex, OBJ.POWERPILL);
+		
 		DM dm = DM.EUCLID;
 		switch (maxIndex){
 		case 0: myMove = game.getNextMoveTowardsTarget(pacManIndex, ghostIndex, dm); break;

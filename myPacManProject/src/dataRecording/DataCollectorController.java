@@ -34,9 +34,17 @@ public class DataCollectorController extends HumanController{
 }
 */
 public class DataCollectorController extends SearchPacMan{
+	String teacherFile;
+	String studentFile;
+	DataSaverLoader teacherDSL;
+	DataSaverLoader studentDSL;
 	
-	public DataCollectorController(){
+	public DataCollectorController(String studentFile, String teacherFile){
 		super();
+		this.teacherFile = teacherFile;
+		this.studentFile = studentFile;
+		this.teacherDSL = new DataSaverLoader(teacherFile);
+		this.studentDSL = new DataSaverLoader(studentFile);
 	}
 	
 	@Override
@@ -45,7 +53,8 @@ public class DataCollectorController extends SearchPacMan{
 		
 		DataTuple data = new DataTuple(game, move, this);
 				
-		DataSaverLoader.SavePacManData(data);		
+		studentDSL.SavePacManData(data);
+		
 		return move;
 	}
 
