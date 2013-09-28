@@ -1,7 +1,5 @@
-package pacman.entries.pacman.neuralPacMan;
+package dataRecording;
 
-import dataRecording.DataSaverLoader;
-import dataRecording.DataTuple;
 
 public class Trainer {
 
