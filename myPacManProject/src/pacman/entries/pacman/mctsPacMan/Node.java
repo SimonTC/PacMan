@@ -14,11 +14,15 @@ public class Node {
 	private int nodeIndex;
 	private int timesVisited;
 	private int distanceToParent;
+	private boolean fullyExpanded;
+	private Game gameState;
 	
 	public Node(int nodeIndex, Node parent, int distanceToParent){
 		this.nodeIndex = nodeIndex;
 		this.parent = parent;
 		this.distanceToParent = distanceToParent;
+		this.timesVisited = 0;
+		this.fullyExpanded=false;
 	}
 	
 	public void buildTree(int curDepth, int maxDepth, Game game){
@@ -170,6 +174,21 @@ public class Node {
 		for (Node n: children){
 			n.colorFamily(game);
 		}
+	}
+	public boolean fullyExpanded(){
+		for (Node n : children){
+			if (n.timesVisited() == 0){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public void setGameState (Game gameCopy){
+		this.gameState=gameCopy;
+	}
+	public Game getGameState (){
+		return this.gameState;
 	}
 	
 }
