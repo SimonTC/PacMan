@@ -24,6 +24,7 @@ import pacman.controllers.examples.RandomNonRevPacMan;
 import pacman.controllers.examples.RandomPacMan;
 import pacman.controllers.examples.StarterGhosts;
 import pacman.controllers.examples.StarterPacMan;
+import pacman.entries.pacman.mctsPacMan.MontePacMan;
 import pacman.entries.pacman.neuralPacMan.NeuralPacMan;
 import pacman.entries.pacman.searchPacMan.controller.SearchPacMan;
 import pacman.game.Game;
@@ -59,7 +60,8 @@ public class Executor
 		//run a game in synchronous mode: game waits until controllers respond.
 		int delay=5;
 		boolean visual=true;
-		exec.runGame(new NeuralPacMan(40),new RandomGhosts(),visual,delay);
+		//exec.runGame(new NeuralPacMan(40),new RandomGhosts(),visual,delay);
+		exec.runGame(new MontePacMan(),new RandomGhosts(),visual,delay);
   		// */
 		
 		/*
