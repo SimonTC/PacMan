@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 import pacman.game.GameView;
 
@@ -14,7 +15,6 @@ public class Node {
 	private int nodeIndex;
 	private int timesVisited;
 	private int distanceToParent;
-	private boolean fullyExpanded;
 	private Game gameState;
 	
 	public Node(int nodeIndex, Node parent, int distanceToParent){
@@ -22,7 +22,6 @@ public class Node {
 		this.parent = parent;
 		this.distanceToParent = distanceToParent;
 		this.timesVisited = 0;
-		this.fullyExpanded=false;
 	}
 	
 	public void buildTree(int curDepth, int maxDepth, Game game){
@@ -189,6 +188,14 @@ public class Node {
 	}
 	public Game getGameState (){
 		return this.gameState;
+	}
+	
+	public void incrementTimesVisited(){
+		timesVisited++;
+	}
+	
+	public void setQvalue(double newValue){
+		qValue = newValue;
 	}
 	
 }

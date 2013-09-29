@@ -19,10 +19,8 @@ public class MontePacMan extends Controller<MOVE>
 
 	public MOVE getMove(Game game, long timeDue) 
 	{
-		int pacManIndex = game.getPacmanCurrentNodeIndex();
-		Node startNode = new Node(pacManIndex, null, 0);
-		buildSearchTree(startNode, game);
-		startNode.colorFamily(game);
+		Game gameCopy = game.copy();
+		//startNode.colorFamily(game);
 
 		return myMove;
 	}
@@ -31,21 +29,55 @@ public class MontePacMan extends Controller<MOVE>
 		int pacManIndex = gameCopy.getPacmanCurrentNodeIndex();
 		Node startNode = new Node(pacManIndex, null, 0);
 		buildSearchTree(startNode, gameCopy);
-		startNode.setGameState(gameCopy);
+		startNode.setGameState(gameCopy.copy());
 		
 		for (int i = 0; i <= MAX_TIME_UNITS; i++){
 			Node leaf = selectNextNode(startNode);
-			//Simulate game
-			
-			//Calculate score
+			//Simulate game and calculate score
+			int simScore = simulation(leaf);			
 			
 			//Backpropagate
+			Node n = leaf;
+			do{
+				n.incrementTimesVisited();
+				double oldValue = n.qValue();
+				n.setQvalue(oldValue + (double) simScore);
+				n = n.parent();
+			} while(n!=null);
 		}
+		
+		Node bestNode = getBestChild(startNode, 0);
+		
+		return gameCopy.getNextMoveTowardsTarget(pacManIndex, bestNode.nodeIndex(), DM.PATH);
 
 	}
 	
-	private void simulation(Node startNode){
-		//Simulate moves
+	private int simulation(Node startNode){
+		
+		Game gameCopy = startNode.getGameState();
+		int pointsBeforeSimulation = gameCopy.getScore();
+		boolean stopSimulation = false;
+		int i = 0;
+		do {
+			int pIndex = gameCopy.getPacmanCurrentNodeIndex();
+			MOVE pMove = nextMoveToPill(pIndex, gameCopy);
+			EnumMap<GHOST,MOVE> gMoves = getGhostMoves(gameCopy, pIndex);
+			gameCopy.advanceGame(pMove, gMoves);
+			i++;
+			if (i == 10 || gameCopy.wasPacManEaten()){
+				stopSimulation = true;
+			}
+		} while (!stopSimulation);
+		
+		int pointsAfterSimulation = gameCopy.getScore();
+		
+		return pointsAfterSimulation - pointsBeforeSimulation;
+	}
+	
+	private MOVE nextMoveToPill(int pacManIndex, Game gameCopy){
+		int[] targetNodes = gameCopy.getActivePillsIndices();
+		int closestNode = gameCopy.getClosestNodeIndexFromNodeIndex(pacManIndex, targetNodes, DM.PATH);
+		return gameCopy.getNextMoveTowardsTarget(pacManIndex, closestNode, DM.PATH);
 	}
 	private void buildSearchTree(Node startNode, Game game){
 		startNode.buildTree(0, MAX_TREE_DEPTH, game);
@@ -60,14 +92,14 @@ public class MontePacMan extends Controller<MOVE>
 		do {
 			if (!n.fullyExpanded()){
 				endNode =expandNode(n);
-				goToNextState(endNode);
+				goToNextState(startNode, endNode);
 				return endNode;
 			} else {
 				n = getBestChild(n, EXPLORATION);
-				goToNextState(n);
+				goToNextState(startNode, n);
 			}
 			gameCopy = n.getGameState();
-			pacManWasEaten=gameCopy.wasPacManEaten();
+			pacManWasEaten=gameCopy.wasPacManEaten(); 
 			powerPillWasEaten = gameCopy.wasPowerPillEaten();
 			noChildren = n.children().isEmpty();
 		} while (!pacManWasEaten && !powerPillWasEaten && !noChildren );
@@ -104,12 +136,8 @@ public class MontePacMan extends Controller<MOVE>
 		return result;
 	}
 	
-	private double getScore(Node n){
-		return n.qValue();
-	}
-	
-	private void goToNextState(Node goalNode){
-		Game gameCopy = goalNode.getGameState();
+	private void goToNextState(Node startNode, Node goalNode){
+		Game gameCopy = startNode.getGameState();
 		int goalIndex = goalNode.nodeIndex();
 		int pIndex = gameCopy.getPacmanCurrentNodeIndex();
 		boolean pacManWasEaten, powerPillWasEaten;
@@ -121,6 +149,8 @@ public class MontePacMan extends Controller<MOVE>
 			pacManWasEaten=gameCopy.wasPacManEaten();
 			powerPillWasEaten = gameCopy.wasPowerPillEaten();
 		} while (pIndex!=goalIndex && !pacManWasEaten && !powerPillWasEaten);
+		
+		goalNode.setGameState(gameCopy.copy());
 
 	}
 	/**
@@ -131,7 +161,7 @@ public class MontePacMan extends Controller<MOVE>
 	 * @return
 	 */
 	private EnumMap<GHOST,MOVE> getGhostMoves(Game gameCopy, int pacManIndex){
-		EnumMap<GHOST,MOVE> map=null;
+		EnumMap<GHOST,MOVE> map= new EnumMap<GHOST, MOVE>(GHOST.class) ;
 		for (GHOST g : GHOST.values()){
 			int gIndex = gameCopy.getGhostCurrentNodeIndex(g);
 			MOVE lastMove = gameCopy.getGhostLastMoveMade(g);
