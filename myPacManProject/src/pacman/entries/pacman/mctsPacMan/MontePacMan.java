@@ -26,6 +26,9 @@ public class MontePacMan extends Controller<MOVE>
 
 	public MOVE getMove(Game game, long timeDue) 
 	{
+		if (game.wasPacManEaten()){
+			currentGoalNode = -1;
+		}
 		if (timeDue == -1){
 			this.timeDue = System.currentTimeMillis() + DEBUG_DELAY;
 		} else {
@@ -111,8 +114,11 @@ public class MontePacMan extends Controller<MOVE>
 		} while (!stopSimulation);
 		
 		int pointsAfterSimulation = gameCopy.getScore();
-		
-		return pointsAfterSimulation - pointsBeforeSimulation;
+		if (gameCopy.wasPacManEaten()){
+			return 0;
+		} else {
+			return pointsAfterSimulation - pointsBeforeSimulation;
+		}
 	}
 	
 	private MOVE nextMoveToPill(int pacManIndex, Game gameCopy){
@@ -133,11 +139,16 @@ public class MontePacMan extends Controller<MOVE>
 		do {
 			if (!n.fullyExpanded()){
 				endNode =expandNode(n);
-				goToNextState(startNode, endNode);
-				return endNode;
+				if (goToNextState(startNode, endNode)){;
+					return endNode;
+				} else {
+					return startNode;
+				}
 			} else {
 				n = getBestChild(n, EXPLORATION);
-				goToNextState(startNode, n);
+				if (!goToNextState(startNode, n)){
+					n = startNode;
+				}
 			}
 			gameCopy = n.getGameState();
 			pacManWasEaten=gameCopy.wasPacManEaten(); 
@@ -176,8 +187,14 @@ public class MontePacMan extends Controller<MOVE>
 		double result = (double) leftPart + rightPart;
 		return result;
 	}
-	
-	private void goToNextState(Node startNode, Node goalNode){
+	/**
+	 * Runs the game game copy until pacman is at the goalNodes node index
+	 * The ghost are by default moving towards pacman if the are non-eatable
+	 * @param startNode
+	 * @param goalNode
+	 * @return true if pacman arrived succesfully at the goal node's index
+	 */
+	private boolean goToNextState(Node startNode, Node goalNode){
 		Game gameCopy = startNode.getGameState();
 		int goalIndex = goalNode.nodeIndex();
 		int pIndex = gameCopy.getPacmanCurrentNodeIndex();
@@ -189,9 +206,14 @@ public class MontePacMan extends Controller<MOVE>
 			pIndex = gameCopy.getPacmanCurrentNodeIndex();
 			pacManWasEaten=gameCopy.wasPacManEaten();
 			powerPillWasEaten = gameCopy.wasPowerPillEaten();
-		} while (pIndex!=goalIndex && !pacManWasEaten && !powerPillWasEaten);
+		} while (pIndex!=goalIndex && !pacManWasEaten);
 		
-		goalNode.setGameState(gameCopy.copy());
+		if (pacManWasEaten){
+			return false;
+		} else {
+			goalNode.setGameState(gameCopy.copy());
+			return true;
+		}
 
 	}
 	/**
@@ -221,4 +243,6 @@ public class MontePacMan extends Controller<MOVE>
 		MOVE lastMove = gameCopy.getPacmanLastMoveMade();
 		return gameCopy.getNextMoveTowardsTarget(pacManIndex, goalIndex, lastMove, DM.PATH);
 	}
+	
+	
 }
