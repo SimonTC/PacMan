@@ -15,10 +15,11 @@ import pacman.game.Constants.MOVE;
 public class MontePacMan extends Controller<MOVE>
 {
 	private MOVE myMove=MOVE.NEUTRAL;
-		
+	private enum STATE {HUNT_PILLS, HUNT_GHOSTS, SURVIVE};
 	private final int MAX_TREE_DEPTH = 50;
 	private final double EXPLORATION = 1.5d;
 	private int currentGoalNode = -1;
+	private STATE curState;
 	//private final long DEBUG_DELAY = 10000000;
 	private final long DEBUG_DELAY = 40;
 	long timeDue;
