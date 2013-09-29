@@ -21,7 +21,7 @@ public class MontePacMan extends Controller<MOVE>
 	{
 		Game gameCopy = game.copy();
 		//startNode.colorFamily(game);
-
+		myMove = mctsSearch(gameCopy);
 		return myMove;
 	}
 	
