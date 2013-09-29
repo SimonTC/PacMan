@@ -74,10 +74,10 @@ public class Node {
 		return false;
 	}
 	
-	private void printFamily(){
+	public void printFamily(){
 		String offSpring ="";
 		for (Node n : children){
-			offSpring += "(I: " + n.nodeIndex() + ", D: " + n.distanceToParent() + ") ";
+			offSpring += "(I: " + n.nodeIndex() + ", D: " + n.distanceToParent() + ", Q: " + n.qValue + ") ";
 		}
 		String s;
 		if (parent == null){

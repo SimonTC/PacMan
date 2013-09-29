@@ -1,5 +1,6 @@
 package pacman.entries.pacman.mctsPacMan;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Random;
@@ -8,6 +9,7 @@ import pacman.controllers.Controller;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Game;
+import pacman.game.GameView;
 import pacman.game.Constants.MOVE;
 
 public class MontePacMan extends Controller<MOVE>
@@ -15,22 +17,29 @@ public class MontePacMan extends Controller<MOVE>
 	private MOVE myMove=MOVE.NEUTRAL;
 		
 	private final int MAX_TREE_DEPTH = 50;
-	private final int MAX_TIME_UNITS = 10;
 	private final double EXPLORATION = 1.5d;
 	private int currentGoalNode = -1;
+	//private final long DEBUG_DELAY = 10000000;
+	private final long DEBUG_DELAY = 40;
+	long timeDue;
 
 	public MOVE getMove(Game game, long timeDue) 
 	{
+		if (timeDue == -1){
+			this.timeDue = System.currentTimeMillis() + DEBUG_DELAY;
+		} else {
+			this.timeDue = timeDue;
+		}
 		Game gameCopy = game.copy();
 		int pIndex = gameCopy.getPacmanCurrentNodeIndex();
 		if (pIndex == currentGoalNode || currentGoalNode == -1 ){
 			Node goal = getNextGoalNode(gameCopy);
 			currentGoalNode = goal.nodeIndex();
-			MOVE nextMove = gameCopy.getNextMoveTowardsTarget(pIndex, currentGoalNode, DM.PATH);
+			myMove = gameCopy.getNextMoveTowardsTarget(pIndex, currentGoalNode, DM.PATH);
 		} else {
 			myMove = gameCopy.getNextMoveTowardsTarget(pIndex, currentGoalNode, DM.PATH);
 		}
-			
+		GameView.addPoints(game, Color.GREEN, currentGoalNode);
 		return myMove;
 	}
 	/**
@@ -43,8 +52,9 @@ public class MontePacMan extends Controller<MOVE>
 		Node startNode = new Node(pacManIndex, null, 0);
 		buildSearchTree(startNode, gameCopy);
 		startNode.setGameState(gameCopy.copy());
-		
-		for (int i = 0; i <= MAX_TIME_UNITS; i++){
+		long curTime;
+				
+		do{
 			Node leaf = selectNextNode(startNode);
 			//Simulate game and calculate score
 			int simScore = simulation(leaf);			
@@ -55,9 +65,12 @@ public class MontePacMan extends Controller<MOVE>
 				n.incrementTimesVisited();
 				double oldValue = n.qValue();
 				n.setQvalue(oldValue + (double) simScore);
+				n.printFamily();
 				n = n.parent();
 			} while(n!=null);
-		}
+			curTime = System.currentTimeMillis();
+			System.out.println();
+		} while (timeDue - curTime > 10);
 		
 		Node bestNode = getNextNode(startNode);
 		
@@ -91,7 +104,7 @@ public class MontePacMan extends Controller<MOVE>
 			EnumMap<GHOST,MOVE> gMoves = getGhostMoves(gameCopy, pIndex);
 			gameCopy.advanceGame(pMove, gMoves);
 			i++;
-			if (i == 10 || gameCopy.wasPacManEaten()){
+			if (i == 20 || gameCopy.wasPacManEaten()){
 				stopSimulation = true;
 			}
 		} while (!stopSimulation);
