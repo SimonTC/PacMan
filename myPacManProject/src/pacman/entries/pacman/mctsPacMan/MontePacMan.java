@@ -1,5 +1,6 @@
 package pacman.entries.pacman.mctsPacMan;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Random;
 
@@ -16,16 +17,28 @@ public class MontePacMan extends Controller<MOVE>
 	private final int MAX_TREE_DEPTH = 50;
 	private final int MAX_TIME_UNITS = 10;
 	private final double EXPLORATION = 1.5d;
+	private int currentGoalNode = -1;
 
 	public MOVE getMove(Game game, long timeDue) 
 	{
 		Game gameCopy = game.copy();
-		//startNode.colorFamily(game);
-		myMove = mctsSearch(gameCopy);
+		int pIndex = gameCopy.getPacmanCurrentNodeIndex();
+		if (pIndex == currentGoalNode || currentGoalNode == -1 ){
+			Node goal = getNextGoalNode(gameCopy);
+			currentGoalNode = goal.nodeIndex();
+			MOVE nextMove = gameCopy.getNextMoveTowardsTarget(pIndex, currentGoalNode, DM.PATH);
+		} else {
+			myMove = gameCopy.getNextMoveTowardsTarget(pIndex, currentGoalNode, DM.PATH);
+		}
+			
 		return myMove;
 	}
-	
-	private MOVE mctsSearch(Game gameCopy){
+	/**
+	 * Using mcts to get the next goal node
+	 * @param gameCopy
+	 * @return
+	 */
+	private Node getNextGoalNode(Game gameCopy){
 		int pacManIndex = gameCopy.getPacmanCurrentNodeIndex();
 		Node startNode = new Node(pacManIndex, null, 0);
 		buildSearchTree(startNode, gameCopy);
@@ -46,10 +59,24 @@ public class MontePacMan extends Controller<MOVE>
 			} while(n!=null);
 		}
 		
-		Node bestNode = getBestChild(startNode, 0);
+		Node bestNode = getNextNode(startNode);
 		
-		return gameCopy.getNextMoveTowardsTarget(pacManIndex, bestNode.nodeIndex(), DM.PATH);
+		return bestNode;
 
+	}
+	
+	private Node getNextNode(Node parent){
+		Node bestChild = null;
+		double uctValueMax = Double.NEGATIVE_INFINITY;
+		double uctValue = 0.0;
+		for (Node n: parent.children()){
+			uctValue = n.qValue();
+			if (uctValue>uctValueMax){
+				uctValueMax = uctValue;
+				bestChild = n;
+			}
+		}
+		return bestChild;
 	}
 	
 	private int simulation(Node startNode){
