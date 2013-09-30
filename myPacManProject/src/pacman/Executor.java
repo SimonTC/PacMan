@@ -56,7 +56,7 @@ public class Executor
 		exec.runExperiment(new ANewAndBetterPacMan(),new RandomGhosts(),numTrials);
 		//*/
 		
-		//*
+		/*
 		//run a game in synchronous mode: game waits until controllers respond.
 		int delay=5;
 		boolean visual=true;
@@ -64,7 +64,7 @@ public class Executor
 		exec.runGame(new MontePacMan(),new RandomGhosts(),visual,delay);
   		// */
 		
-		/*
+		//*
 		//run the game in asynchronous mode.
 		boolean visual=true;
 //		exec.runGameTimed(new NearestPillPacMan(),new AggressiveGhosts(),visual);

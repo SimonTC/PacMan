@@ -26,7 +26,6 @@ public class MontePacMan extends Controller<MOVE>
 
 	public MOVE getMove(Game game, long timeDue) 
 	{
-		System.out.println(getPoints(game));
 		if (game.wasPacManEaten()){
 			currentGoalNode = -1;
 		}
@@ -36,7 +35,6 @@ public class MontePacMan extends Controller<MOVE>
 			this.timeDue = timeDue;
 		}
 		Game gameCopy = game.copy();
-		System.out.println(getPoints(game));
 		int pIndex = gameCopy.getPacmanCurrentNodeIndex();
 		if (pIndex == currentGoalNode || currentGoalNode == -1 ){
 			Node goal = getNextGoalNode(gameCopy);
@@ -54,22 +52,16 @@ public class MontePacMan extends Controller<MOVE>
 	 * @return
 	 */
 	private Node getNextGoalNode(Game gameCopy){
-		System.out.println(getPoints(gameCopy));
 		int pacManIndex = gameCopy.getPacmanCurrentNodeIndex();
 		Node rootNode = new Node(pacManIndex, null, 0);
 		buildSearchTree(rootNode, gameCopy);
 		rootNode.setGameState(gameCopy.copy());
-		System.out.println(getPoints(rootNode.getGameState()));
 		long curTime;
 				
 		do{
 			Node leafNode = selectNextNode(rootNode);
-			System.out.println("Root: " + getPoints(rootNode.getGameState()));
-			System.out.println("Leaf: " + getPoints(leafNode.getGameState()));
 			//Simulate game and calculate score
 			int simScore = simulation(leafNode, rootNode);
-			System.out.println("Root: " + getPoints(rootNode.getGameState()));
-			System.out.println("Leaf: " + getPoints(leafNode.getGameState()));
 			
 			//Backpropagate
 			Node n = leafNode;
@@ -116,7 +108,7 @@ public class MontePacMan extends Controller<MOVE>
 		int i = 0;
 		do {
 			int pIndex = gameCopy.getPacmanCurrentNodeIndex();
-			MOVE pMove = nextMoveToPill(pIndex, gameCopy);
+			MOVE pMove = nextSimulationMove(pIndex, gameCopy);
 			EnumMap<GHOST,MOVE> gMoves = getGhostMoves(gameCopy, pIndex);
 			gameCopy.advanceGame(pMove, gMoves);
 			i++;
@@ -139,8 +131,28 @@ public class MontePacMan extends Controller<MOVE>
 	 */
 	private int getPoints(Game game){
 		//Strategies not implemented yet
-		int points = game.getNumberOfActivePills();
+		int pills = game.getNumberOfActivePills();
+		int powerPills = game.getNumberOfActivePowerPills();
+		int points = pills + (powerPills * 10);
 		return points;
+	}
+	/**
+	 * STRATEGIES NOT IMPLEMENTED!!!
+	 * Returns the next move pacman should take in the simulation based on the current
+	 * simulation strategy.
+	 * 
+	 * @param pacManIndex
+	 * @param gameCopy
+	 * @return
+	 */
+	private MOVE nextSimulationMove(int pacManIndex, Game gameCopy){
+		return nextMoveToPowerPill(pacManIndex, gameCopy);
+	}
+	
+	private MOVE nextMoveToPowerPill(int pacManIndex, Game gameCopy){
+		int[] targetNodes = gameCopy.getActivePowerPillsIndices();
+		int closestNode = gameCopy.getClosestNodeIndexFromNodeIndex(pacManIndex, targetNodes, DM.PATH);
+		return gameCopy.getNextMoveTowardsTarget(pacManIndex, closestNode, DM.PATH);
 	}
 	
 	private MOVE nextMoveToPill(int pacManIndex, Game gameCopy){
@@ -148,6 +160,7 @@ public class MontePacMan extends Controller<MOVE>
 		int closestNode = gameCopy.getClosestNodeIndexFromNodeIndex(pacManIndex, targetNodes, DM.PATH);
 		return gameCopy.getNextMoveTowardsTarget(pacManIndex, closestNode, DM.PATH);
 	}
+	
 	private void buildSearchTree(Node startNode, Game game){
 		startNode.buildTree(0, MAX_TREE_DEPTH, game);
 		startNode.removeIncest();
@@ -227,14 +240,13 @@ public class MontePacMan extends Controller<MOVE>
 	}
 	/**
 	 * Runs the game game copy until pacman is at the goalNodes node index
-	 * The ghost are by default moving towards pacman if the are non-eatable
+	 * The ghost are by default moving towards pacman if they are non-eatable
 	 * @param startNode
 	 * @param goalNode
 	 * @return true if pacman arrived succesfully at the goal node's index
 	 */
 	private boolean goToNextState(Node startNode, Node goalNode){
 		Game gameCopy = startNode.getGameState().copy();
-		System.out.println( getPoints(gameCopy));
 
 		int goalIndex = goalNode.nodeIndex();
 		int pIndex = gameCopy.getPacmanCurrentNodeIndex();
@@ -246,10 +258,8 @@ public class MontePacMan extends Controller<MOVE>
 			EnumMap<GHOST,MOVE> gMoves = getGhostMoves(gameCopy, pIndex);
 			gameCopy.advanceGame(pMove, gMoves);
 			pIndex = gameCopy.getPacmanCurrentNodeIndex();
-			System.out.println(pIndex);
 			pacManWasEaten=gameCopy.wasPacManEaten();
 			powerPillWasEaten = gameCopy.wasPowerPillEaten();
-			//System.out.println( getPoints(gameCopy));
 		} while (pIndex!=goalIndex && !pacManWasEaten);
 		
 		if (pacManWasEaten){
@@ -284,16 +294,14 @@ public class MontePacMan extends Controller<MOVE>
 	}
 	/**
 	 * Returns the next move which Pacman should take to get to the goal index.
-	 * Takes the last move of pacman into account.
 	 * @param gameCopy
 	 * @param pacManIndex
 	 * @param goalIndex
 	 * @return
 	 */
 	private MOVE getNextPacManMove(Game gameCopy, int pacManIndex, int goalIndex){
-		MOVE lastMove = gameCopy.getPacmanLastMoveMade();
-		MOVE thisMove1 = gameCopy.getNextMoveTowardsTarget(pacManIndex, goalIndex, DM.PATH);
-		return thisMove1;
+		MOVE thisMove = gameCopy.getNextMoveTowardsTarget(pacManIndex, goalIndex, DM.PATH);
+		return thisMove;
 	}
 	
 	
