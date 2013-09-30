@@ -61,7 +61,7 @@ public class MontePacMan extends Controller<MOVE>
 		do{
 			Node leaf = selectNextNode(startNode);
 			//Simulate game and calculate score
-			int simScore = simulation(leaf);			
+			int simScore = simulation(leaf);
 			
 			//Backpropagate
 			Node n = leaf;
@@ -157,7 +157,11 @@ public class MontePacMan extends Controller<MOVE>
 		} while (!pacManWasEaten && !powerPillWasEaten && !noChildren );
 		return n;
 	}
-	
+	/**
+	 * Returns the next child node that has not been expanded
+	 * @param parent
+	 * @return
+	 */
 	private Node expandNode(Node parent){
 		for (Node n: parent.children()){
 			if (n.timesVisited()==0){
@@ -166,7 +170,13 @@ public class MontePacMan extends Controller<MOVE>
 		}
 		return null; //Should not reach here because method is only called when there are unexplored children
 	}
-	
+	/**
+	 * Returns the best child node to move to based on the UCT of the child and the
+	 * exploration constant
+	 * @param parent
+	 * @param explorationConstant
+	 * @return
+	 */
 	private Node getBestChild(Node parent, double explorationConstant ){
 		Node bestChild = null;
 		double uctValueMax = 0.0;
@@ -180,7 +190,13 @@ public class MontePacMan extends Controller<MOVE>
 		}
 		return bestChild;
 	}
-	
+	/**
+	 * Calculates the UCT of a node
+	 * @param parent  
+	 * @param child the node for which the UCT is calculated
+	 * @param explorationConstant
+	 * @return
+	 */
 	private double calculateUCT(Node parent, Node child, double explorationConstant){
 		double leftPart = (double) (child.qValue()/child.timesVisited());
 		double rightPart = (double) explorationConstant * Math.sqrt((2*Math.log(parent.timesVisited())/child.timesVisited()));
@@ -198,7 +214,9 @@ public class MontePacMan extends Controller<MOVE>
 		Game gameCopy = startNode.getGameState();
 		int goalIndex = goalNode.nodeIndex();
 		int pIndex = gameCopy.getPacmanCurrentNodeIndex();
+		
 		boolean pacManWasEaten, powerPillWasEaten;
+		
 		do{
 			MOVE pMove = getNextPacManMove(gameCopy, pIndex, goalIndex);
 			EnumMap<GHOST,MOVE> gMoves = getGhostMoves(gameCopy, pIndex);
@@ -238,7 +256,14 @@ public class MontePacMan extends Controller<MOVE>
 		}
 		return map;
 	}
-	
+	/**
+	 * Returns the next move which Pacman should take to get to the goal index.
+	 * Takes the last move of pacman into account.
+	 * @param gameCopy
+	 * @param pacManIndex
+	 * @param goalIndex
+	 * @return
+	 */
 	private MOVE getNextPacManMove(Game gameCopy, int pacManIndex, int goalIndex){
 		MOVE lastMove = gameCopy.getPacmanLastMoveMade();
 		return gameCopy.getNextMoveTowardsTarget(pacManIndex, goalIndex, lastMove, DM.PATH);
