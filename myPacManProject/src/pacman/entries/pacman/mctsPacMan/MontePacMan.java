@@ -20,8 +20,8 @@ public class MontePacMan extends Controller<MOVE>
 	private final double EXPLORATION = 1.5d;
 	private int currentGoalNode = -1;
 	private STATE curState;
-	//private final long DEBUG_DELAY = 10000000;
-	private final long DEBUG_DELAY = 40;
+	private final long DEBUG_DELAY = 10000000;
+	//private final long DEBUG_DELAY = 40;
 	long timeDue;
 
 	public MOVE getMove(Game game, long timeDue) 
@@ -69,7 +69,6 @@ public class MontePacMan extends Controller<MOVE>
 				n.incrementTimesVisited();
 				double oldValue = n.qValue();
 				n.setQvalue(oldValue + (double) simScore);
-				n.printFamily();
 				n = n.parent();
 			} while(n!=null);
 			curTime = System.currentTimeMillis();
@@ -95,10 +94,14 @@ public class MontePacMan extends Controller<MOVE>
 		}
 		return bestChild;
 	}
-	
+	/**
+	 * Simulates a game from the state given by the startNode
+	 * @param startNode
+	 * @return
+	 */
 	private int simulation(Node startNode){
 		
-		Game gameCopy = startNode.getGameState();
+		Game gameCopy = startNode.getGameState().copy();
 		int pointsBeforeSimulation = gameCopy.getScore();
 		boolean stopSimulation = false;
 		int i = 0;
