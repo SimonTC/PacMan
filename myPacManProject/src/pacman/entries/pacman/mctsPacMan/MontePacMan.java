@@ -20,6 +20,7 @@ public class MontePacMan extends Controller<MOVE>
 	private final double EXPLORATION = 1.5d;
 	private int currentGoalNode = -1;
 	private STATE curState;
+	private final int SIMULATION_STEPS = 20;
 	//private final long DEBUG_DELAY = 10000000;
 	private final long DEBUG_DELAY = 40;
 	long timeDue;
@@ -192,7 +193,7 @@ public class MontePacMan extends Controller<MOVE>
 			EnumMap<GHOST,MOVE> gMoves = getGhostMoves(gameCopy, pIndex);
 			gameCopy.advanceGame(pMove, gMoves);
 			i++;
-			if (i == 20 || gameCopy.wasPacManEaten()){
+			if (i == SIMULATION_STEPS || gameCopy.wasPacManEaten()){
 				stopSimulation = true;
 			}
 		} while (!stopSimulation);
@@ -283,8 +284,11 @@ public class MontePacMan extends Controller<MOVE>
 	
 	private MOVE nextMoveAwayFromGhost(int pacManIndex, Game gameCopy){
 		GHOST g = nearestGhost(gameCopy, true);
-		int gIndex = gameCopy.getGhostCurrentNodeIndex(g);
-		return gameCopy.getNextMoveAwayFromTarget(pacManIndex, gIndex, DM.MANHATTAN);
+		if (g != null){
+			int gIndex = gameCopy.getGhostCurrentNodeIndex(g);
+			return gameCopy.getNextMoveAwayFromTarget(pacManIndex, gIndex, DM.MANHATTAN);
+		}
+		return MOVE.NEUTRAL;
 	}
 	
 	private void buildSearchTree(Node startNode, Game game){

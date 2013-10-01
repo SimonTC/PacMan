@@ -53,7 +53,7 @@ public class Executor
 		/*
 		//run multiple games in batch mode - good for testing.
 		int numTrials=20;
-		exec.runExperiment(new ANewAndBetterPacMan(),new RandomGhosts(),numTrials);
+		exec.runExperiment(new MontePacMan(),new RandomGhosts(),numTrials);
 		//*/
 		
 		/*
