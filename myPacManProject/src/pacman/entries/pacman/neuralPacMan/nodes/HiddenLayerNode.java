@@ -28,9 +28,7 @@ public class HiddenLayerNode extends MasterNode {
 		for (int i = 0; i < inputNodes.length; i++){
 			totalInputValue += inputNodes[i].value(pacManIndex, game) * inputWeights[i];
 		}
-		return (float) sigmoidValue(totalInputValue);
-		
-		
+		return (float) sigmoidValue(totalInputValue);		
 	}
 	
 	private double sigmoidValue (float value){
