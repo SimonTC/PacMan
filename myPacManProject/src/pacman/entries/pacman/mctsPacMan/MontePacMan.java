@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Random;
 
-import pacman.Executor;
 import pacman.controllers.Controller;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
@@ -17,10 +16,9 @@ public class MontePacMan extends Controller<MOVE>
 {
 	private MOVE myMove=MOVE.NEUTRAL;
 	private enum STATE {HUNT_PILLS, HUNT_GHOSTS, SURVIVE};
-	private final int MAX_TREE_DEPTH = 20;
+	private final int MAX_TREE_DEPTH = 50;
 	private final double EXPLORATION = 1.5d;
 	private int currentGoalNode = -1;
-	private final int STEPS_IN_SIMULATION = 50;
 	private STATE curState;
 	//private final long DEBUG_DELAY = 10000000;
 	private final long DEBUG_DELAY = 40;
@@ -74,6 +72,7 @@ public class MontePacMan extends Controller<MOVE>
 				n = n.parent();
 			} while(n!=null);
 			curTime = System.currentTimeMillis();
+			System.out.println();
 		} while (timeDue - curTime > 10);
 		
 		Node bestNode = getNextNode(rootNode);
@@ -105,7 +104,6 @@ public class MontePacMan extends Controller<MOVE>
 		Game rootGame = rootNode.getGameState().copy();
 		Game gameCopy = leafNode.getGameState().copy();
 		int pointsBeforeSimulation = getPoints(rootGame);
-		String gameString;
 		boolean stopSimulation = false;
 		int i = 0;
 		do {
@@ -113,19 +111,17 @@ public class MontePacMan extends Controller<MOVE>
 			MOVE pMove = nextSimulationMove(pIndex, gameCopy);
 			EnumMap<GHOST,MOVE> gMoves = getGhostMoves(gameCopy, pIndex);
 			gameCopy.advanceGame(pMove, gMoves);
-		//gameString = gameCopy.getGameState();
-		//Executor.saveToFile(gameString, "Simulation.txt", true);
 			i++;
-			if (i == STEPS_IN_SIMULATION || gameCopy.wasPacManEaten()){
+			if (i == 20 || gameCopy.wasPacManEaten()){
 				stopSimulation = true;
 			}
 		} while (!stopSimulation);
-		int pointsToParent =  leafNode.pointsFromParent();
+		
 		int pointsAfterSimulation = getPoints(gameCopy);
 		if (gameCopy.wasPacManEaten()){
 			return 0;
 		} else {
-			return pointsBeforeSimulation - pointsAfterSimulation + pointsToParent;
+			return pointsBeforeSimulation - pointsAfterSimulation;
 		}
 	}
 	/**
@@ -135,17 +131,9 @@ public class MontePacMan extends Controller<MOVE>
 	 */
 	private int getPoints(Game game){
 		//Strategies not implemented yet
-		int points;
-		/*
 		int pills = game.getNumberOfActivePills();
 		int powerPills = game.getNumberOfActivePowerPills();
 		int points = pills + (powerPills * 10);
-		*/
-		if (game.wasPacManEaten()){
-			points = -10;
-		} else {
-			points = 10;
-		}
 		return points;
 	}
 	/**
@@ -193,13 +181,15 @@ public class MontePacMan extends Controller<MOVE>
 				}
 			} else {
 				startNode = getBestChild(startNode, EXPLORATION);
-				goToNextState(rootNode, startNode);
+				if (!goToNextState(rootNode, startNode)){
+					startNode = rootNode;
+				}
 			}
 			gameCopy = startNode.getGameState();
 			pacManWasEaten=gameCopy.wasPacManEaten(); 
 			powerPillWasEaten = gameCopy.wasPowerPillEaten();
 			noChildren = startNode.children().isEmpty();
-		} while (!pacManWasEaten && !noChildren );
+		} while (!pacManWasEaten && !powerPillWasEaten && !noChildren );
 		return startNode;
 	}
 	/**
@@ -224,7 +214,7 @@ public class MontePacMan extends Controller<MOVE>
 	 */
 	private Node getBestChild(Node parent, double explorationConstant ){
 		Node bestChild = null;
-		double uctValueMax = Double.NEGATIVE_INFINITY;
+		double uctValueMax = 0.0;
 		double uctValue = 0.0;
 		for (Node n: parent.children()){
 			uctValue = calculateUCT(parent, n, explorationConstant);
@@ -276,16 +266,9 @@ public class MontePacMan extends Controller<MOVE>
 			return false;
 		} else {
 			goalNode.setGameState(gameCopy.copy());
-			goalNode.setPointsFromParent(findPointsEarned(goalNode, goalNode.parent()));
 			return true;
 		}
 
-	}
-	
-	private int findPointsEarned(Node child, Node parent){
-		int parentPills = parent.getGameState().getNumberOfActivePills();
-		int childPills = child.getGameState().getNumberOfActivePills();
-		return parentPills - childPills;
 	}
 	/**
 	 * Returns the moves for the ghosts.
