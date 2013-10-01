@@ -101,7 +101,8 @@ public class Node {
 		int[] neighbours = game.getNeighbouringNodes(nodeIndex);
 		int childIndex;
 		for (int i : neighbours){
-			childIndex = nextJunctionIndex(i, nodeIndex, game);
+			//childIndex = nextJunctionIndex(i, nodeIndex, game);
+			childIndex = nextPillIndex(i, nodeIndex, game);
 			if (childIndex != parentIndex){
 				int distanceToParent = game.getShortestPathDistance(nodeIndex, childIndex);
 				children.add(new Node(childIndex, this, distanceToParent));
@@ -122,7 +123,6 @@ public class Node {
 		if (neighbours.length > 2){
 			return index;
 		}
-		
 		for (int i : neighbours){
 			if (i != parentIndex ){
 				return nextJunctionIndex(i, index, game);
@@ -133,6 +133,20 @@ public class Node {
 		return 0;
 	}
 	
+	private int nextPillIndex(int index, int parentIndex, Game game){
+		int[] neighbours = game.getNeighbouringNodes(index);
+		if (game.getPillIndex(index)> -1){
+			return index;
+		}
+		for (int i : neighbours){
+			if (i != parentIndex ){
+				return nextPillIndex(i, index, game);
+			}
+		}
+		//Will never reach here. There will always be at least one 
+		//other neighbour than the parent
+		return 0;
+	}
 	
 	public Node parent(){
 		return this.parent;
