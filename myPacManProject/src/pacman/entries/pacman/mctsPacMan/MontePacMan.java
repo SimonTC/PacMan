@@ -72,7 +72,6 @@ public class MontePacMan extends Controller<MOVE>
 				n = n.parent();
 			} while(n!=null);
 			curTime = System.currentTimeMillis();
-			System.out.println();
 		} while (timeDue - curTime > 10);
 		
 		Node bestNode = getNextNode(rootNode);
