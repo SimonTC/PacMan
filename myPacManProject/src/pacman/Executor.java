@@ -49,17 +49,17 @@ public class Executor
 	{
 		Executor exec=new Executor();
 		
-		/*
+		//*
 		//run multiple games in batch mode - good for testing.
 		int numTrials=20;
-		exec.runExperiment(new ANewAndBetterPacMan(),new RandomGhosts(),numTrials);
+		exec.runExperiment(new NeuralPacMan(40),new RandomGhosts(),numTrials);
 		//*/
 		
-		//*
+		/*
 		//run a game in synchronous mode: game waits until controllers respond.
 		int delay=5;
 		boolean visual=true;
-		exec.runGame(new DataCollectorController("trainingData.txt", "trainingData - searchPacMan.txt"),new RandomGhosts(),visual,delay);
+		exec.runGame(new NeuralPacMan(20),new RandomGhosts(),visual,delay);
   		// */
 		
 		/*
@@ -124,11 +124,10 @@ public class Executor
 			}
 			
 			avgScore+=game.getScore();
-			System.out.println(game.getScore());
-			//System.out.println(i+"\t"+game.getScore());
+			System.out.println(i+"\t"+game.getScore());
 		}
 		
-		//System.out.println(avgScore/trials);
+		System.out.println(avgScore/trials);
     }
 	
 	/**
