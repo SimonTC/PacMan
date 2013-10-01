@@ -50,10 +50,10 @@ public class Executor
 	{
 		Executor exec=new Executor();
 
-		/*
+		//*
 		//run multiple games in batch mode - good for testing.
-		int numTrials=20;
-		exec.runExperiment(new MontePacMan(),new RandomGhosts(),numTrials);
+		int numTrials=5;
+		exec.runExperiment(new MontePacMan(),new StarterGhosts(),numTrials);
 		//*/
 		
 		/*
@@ -64,7 +64,7 @@ public class Executor
 		exec.runGame(new MontePacMan(),new RandomGhosts(),visual,delay);
   		// */
 		
-		//*
+		/*
 		//run the game in asynchronous mode.
 		boolean visual=true;
 //		exec.runGameTimed(new NearestPillPacMan(),new AggressiveGhosts(),visual);
@@ -127,10 +127,10 @@ public class Executor
 			
 			avgScore+=game.getScore();
 			System.out.println(game.getScore());
-			//System.out.println(i+"\t"+game.getScore());
+			System.out.println(i+"\t"+game.getScore());
 		}
 		
-		//System.out.println(avgScore/trials);
+		System.out.println(avgScore/trials);
     }
 	
 	/**
