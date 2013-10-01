@@ -15,7 +15,7 @@ import pacman.game.Constants.MOVE;
 public class MontePacMan extends Controller<MOVE>
 {
 	private MOVE myMove=MOVE.NEUTRAL;
-	private enum STATE {HUNT_PILLS, HUNT_GHOSTS, SURVIVE};
+	private enum STATE {HUNT_PILLS, HUNT_POWERPILLS, HUNT_GHOSTS, FLEE};
 	private final int MAX_TREE_DEPTH = 50;
 	private final double EXPLORATION = 1.5d;
 	private int currentGoalNode = -1;
@@ -35,16 +35,68 @@ public class MontePacMan extends Controller<MOVE>
 			this.timeDue = timeDue;
 		}
 		Game gameCopy = game.copy();
+		curState = getCurrentPacManState(gameCopy);
 		int pIndex = gameCopy.getPacmanCurrentNodeIndex();
 		if (pIndex == currentGoalNode || currentGoalNode == -1 ){
 			Node goal = getNextGoalNode(gameCopy);
 			currentGoalNode = goal.nodeIndex();
-			myMove = gameCopy.getNextMoveTowardsTarget(pIndex, currentGoalNode, DM.PATH);
+			myMove = gameCopy.getNextMoveTowardsTarget(pIndex, currentGoalNode, DM.MANHATTAN);
 		} else {
-			myMove = gameCopy.getNextMoveTowardsTarget(pIndex, currentGoalNode, DM.PATH);
+			myMove = gameCopy.getNextMoveTowardsTarget(pIndex, currentGoalNode, DM.MANHATTAN);
 		}
 		GameView.addPoints(game, Color.GREEN, currentGoalNode);
 		return myMove;
+	}
+	
+	private STATE getCurrentPacManState(Game game){
+		GHOST nearestGhost = nearestGhost(game);
+		int pIndex = game.getPacmanCurrentNodeIndex();
+		double distToNearestGhost = Double.POSITIVE_INFINITY;
+		boolean ghostIsEatable = false;
+		if (nearestGhost != null){
+			int ghostIndex = game.getGhostCurrentNodeIndex(nearestGhost(game));
+			distToNearestGhost = game.getDistance(pIndex, ghostIndex, DM.MANHATTAN);
+			ghostIsEatable = game.getGhostEdibleTime(nearestGhost) > 5;
+		}
+		int powerPillIndex = nearestPowerPillIndex(game);
+		
+		double distToNearestPowerPill = game.getDistance(pIndex, powerPillIndex, DM.MANHATTAN);
+		
+		
+		if (distToNearestGhost < 10 && !ghostIsEatable){
+			return STATE.FLEE;
+		} 
+		if (ghostIsEatable){
+			return STATE.HUNT_GHOSTS;
+		}
+		if (distToNearestPowerPill < 30 && ghostIsEatable){
+			return STATE.HUNT_POWERPILLS;
+		} 
+		return STATE.HUNT_PILLS;
+	}
+	
+	private int nearestPowerPillIndex (Game game){
+		int pIndex = game.getPacmanCurrentNodeIndex();
+		int[] arr = game.getActivePowerPillsIndices();
+		return game.getClosestNodeIndexFromNodeIndex(pIndex, arr, DM.MANHATTAN);
+	}
+	
+	
+	private GHOST nearestGhost(Game game){
+		double minDist = Double.POSITIVE_INFINITY;
+		int pIndex = game.getPacmanCurrentNodeIndex();
+		GHOST nearestGhost = null;
+		for (GHOST g : GHOST.values()){
+			if (game.getGhostLairTime(g)==0){
+				int ghostIndex = game.getGhostCurrentNodeIndex(g);
+				double dist = game.getDistance(pIndex, ghostIndex, DM.MANHATTAN);
+				if (dist < minDist){
+					minDist=dist;
+					nearestGhost = g;
+				}
+			}
+		}
+		return nearestGhost;
 	}
 	/**
 	 * Using mcts to get the next goal node
@@ -102,7 +154,6 @@ public class MontePacMan extends Controller<MOVE>
 	private int simulation(Node leafNode, Node rootNode){
 		Game rootGame = rootNode.getGameState().copy();
 		Game gameCopy = leafNode.getGameState().copy();
-		int pointsBeforeSimulation = getPoints(rootGame);
 		boolean stopSimulation = false;
 		int i = 0;
 		do {
@@ -116,11 +167,10 @@ public class MontePacMan extends Controller<MOVE>
 			}
 		} while (!stopSimulation);
 		
-		int pointsAfterSimulation = getPoints(gameCopy);
 		if (gameCopy.wasPacManEaten()){
 			return 0;
 		} else {
-			return pointsBeforeSimulation - pointsAfterSimulation;
+			return getPoints(rootGame, gameCopy);
 		}
 	}
 	/**
@@ -128,12 +178,39 @@ public class MontePacMan extends Controller<MOVE>
 	 * @param game
 	 * @return
 	 */
-	private int getPoints(Game game){
+	private int getPoints(Game stateBeforeSim, Game stateAfterSim){
 		//Strategies not implemented yet
-		int pills = game.getNumberOfActivePills();
-		int powerPills = game.getNumberOfActivePowerPills();
-		int points = pills + (powerPills * 10);
-		return points;
+		switch (curState){
+		case FLEE: 
+			if (stateAfterSim.wasPacManEaten()){
+				return 0;
+			} else {
+				return 1;
+			}
+		case HUNT_POWERPILLS:
+			if (stateAfterSim.wasPowerPillEaten()){
+				return 10;
+			} else {
+				return 0;
+			}
+		case HUNT_PILLS:
+			int pillsBefore = stateBeforeSim.getNumberOfActivePills();
+			int pillsAfter = stateAfterSim.getNumberOfActivePills();
+			return pillsBefore - pillsAfter;
+		
+		case HUNT_GHOSTS:
+			int points = 0;
+			for (GHOST g : GHOST.values()){
+				int lairTimeBefore = stateBeforeSim.getGhostLairTime(g);
+				int lairTimeAfter = stateAfterSim.getGhostLairTime(g);
+				if(lairTimeBefore == 0 && lairTimeAfter > 0){
+					points += 10;
+				}
+			}
+			return points;
+		default:
+			return 0;
+		} 
 	}
 	/**
 	 * STRATEGIES NOT IMPLEMENTED!!!
@@ -145,19 +222,39 @@ public class MontePacMan extends Controller<MOVE>
 	 * @return
 	 */
 	private MOVE nextSimulationMove(int pacManIndex, Game gameCopy){
-		return nextMoveToPowerPill(pacManIndex, gameCopy);
+		switch (curState){
+		case HUNT_POWERPILLS: return nextMoveToPowerPill(pacManIndex, gameCopy);
+		case HUNT_PILLS: return nextMoveToPill(pacManIndex, gameCopy);
+		case HUNT_GHOSTS: return nextMoveToGhost(pacManIndex, gameCopy);
+		case FLEE: return nextMoveAwayFromGhost(pacManIndex, gameCopy);
+		default: return MOVE.NEUTRAL;
+		}
+		
+		
 	}
 	
 	private MOVE nextMoveToPowerPill(int pacManIndex, Game gameCopy){
 		int[] targetNodes = gameCopy.getActivePowerPillsIndices();
-		int closestNode = gameCopy.getClosestNodeIndexFromNodeIndex(pacManIndex, targetNodes, DM.PATH);
-		return gameCopy.getNextMoveTowardsTarget(pacManIndex, closestNode, DM.PATH);
+		int closestNode = gameCopy.getClosestNodeIndexFromNodeIndex(pacManIndex, targetNodes, DM.MANHATTAN);
+		return gameCopy.getNextMoveTowardsTarget(pacManIndex, closestNode, DM.MANHATTAN);
 	}
 	
 	private MOVE nextMoveToPill(int pacManIndex, Game gameCopy){
 		int[] targetNodes = gameCopy.getActivePillsIndices();
-		int closestNode = gameCopy.getClosestNodeIndexFromNodeIndex(pacManIndex, targetNodes, DM.PATH);
-		return gameCopy.getNextMoveTowardsTarget(pacManIndex, closestNode, DM.PATH);
+		int closestNode = gameCopy.getClosestNodeIndexFromNodeIndex(pacManIndex, targetNodes, DM.MANHATTAN);
+		return gameCopy.getNextMoveTowardsTarget(pacManIndex, closestNode, DM.MANHATTAN);
+	}
+	
+	private MOVE nextMoveToGhost(int pacManIndex, Game gameCopy){
+		GHOST g = nearestGhost(gameCopy);
+		int gIndex = gameCopy.getGhostCurrentNodeIndex(g);
+		return gameCopy.getNextMoveTowardsTarget(pacManIndex, gIndex, DM.MANHATTAN);
+	}
+	
+	private MOVE nextMoveAwayFromGhost(int pacManIndex, Game gameCopy){
+		GHOST g = nearestGhost(gameCopy);
+		int gIndex = gameCopy.getGhostCurrentNodeIndex(g);
+		return gameCopy.getNextMoveAwayFromTarget(pacManIndex, gIndex, DM.MANHATTAN);
 	}
 	
 	private void buildSearchTree(Node startNode, Game game){
@@ -283,9 +380,9 @@ public class MontePacMan extends Controller<MOVE>
 			MOVE lastMove = gameCopy.getGhostLastMoveMade(g);
 			MOVE thisMove;
 			if (gameCopy.getGhostEdibleTime(g)>0){
-				thisMove=gameCopy.getNextMoveAwayFromTarget(gIndex, pacManIndex, lastMove, DM.PATH);
+				thisMove=gameCopy.getNextMoveAwayFromTarget(gIndex, pacManIndex, lastMove, DM.MANHATTAN);
 			}else{
-				thisMove=gameCopy.getNextMoveTowardsTarget(gIndex, pacManIndex, lastMove, DM.PATH);
+				thisMove=gameCopy.getNextMoveTowardsTarget(gIndex, pacManIndex, lastMove, DM.MANHATTAN);
 			}
 			map.put(g, thisMove);
 		}
@@ -299,7 +396,7 @@ public class MontePacMan extends Controller<MOVE>
 	 * @return
 	 */
 	private MOVE getNextPacManMove(Game gameCopy, int pacManIndex, int goalIndex){
-		MOVE thisMove = gameCopy.getNextMoveTowardsTarget(pacManIndex, goalIndex, DM.PATH);
+		MOVE thisMove = gameCopy.getNextMoveTowardsTarget(pacManIndex, goalIndex, DM.MANHATTAN);
 		return thisMove;
 	}
 	
