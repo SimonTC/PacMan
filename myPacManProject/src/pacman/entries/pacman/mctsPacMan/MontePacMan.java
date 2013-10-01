@@ -49,27 +49,39 @@ public class MontePacMan extends Controller<MOVE>
 	}
 	
 	private STATE getCurrentPacManState(Game game){
-		GHOST nearestGhost = nearestGhost(game);
+		
 		int pIndex = game.getPacmanCurrentNodeIndex();
-		double distToNearestGhost = Double.POSITIVE_INFINITY;
-		boolean ghostIsEatable = false;
-		if (nearestGhost != null){
-			int ghostIndex = game.getGhostCurrentNodeIndex(nearestGhost(game));
-			distToNearestGhost = game.getDistance(pIndex, ghostIndex, DM.MANHATTAN);
-			ghostIsEatable = game.getGhostEdibleTime(nearestGhost) > 5;
+		
+		//Find distance to enares dangerous ghost		
+		GHOST nearestDangerousGhost = nearestGhost(game, true);
+		double distToNearestDangerousGhost = Double.POSITIVE_INFINITY;
+		if (nearestDangerousGhost != null){
+			int ghostIndex = game.getGhostCurrentNodeIndex(nearestDangerousGhost);
+			distToNearestDangerousGhost = game.getDistance(pIndex, ghostIndex, DM.MANHATTAN);
 		}
+		
+		//Find distance to nearest safe ghost
+		GHOST nearestSafeGhost = nearestGhost(game, false);
+		double distToNearestSafeGhost = Double.POSITIVE_INFINITY;
+		if (nearestSafeGhost != null){
+			int ghostIndex = game.getGhostCurrentNodeIndex(nearestSafeGhost);
+			distToNearestSafeGhost = game.getDistance(pIndex, ghostIndex, DM.MANHATTAN);
+		}
+		
+		//Find distance to nearest power pill
 		int powerPillIndex = nearestPowerPillIndex(game);
+		double distToNearestPowerPill = Double.POSITIVE_INFINITY;
+		if (powerPillIndex > -1){
+			distToNearestPowerPill = game.getDistance(pIndex, powerPillIndex, DM.MANHATTAN);
+		}
 		
-		double distToNearestPowerPill = game.getDistance(pIndex, powerPillIndex, DM.MANHATTAN);
-		
-		
-		if (distToNearestGhost < 10 && !ghostIsEatable){
+		if (distToNearestDangerousGhost < 10 ){
 			return STATE.FLEE;
 		} 
-		if (ghostIsEatable){
+		if (distToNearestSafeGhost < 10){
 			return STATE.HUNT_GHOSTS;
 		}
-		if (distToNearestPowerPill < 30 && ghostIsEatable){
+		if (distToNearestPowerPill < 10 && distToNearestDangerousGhost < 15){
 			return STATE.HUNT_POWERPILLS;
 		} 
 		return STATE.HUNT_PILLS;
@@ -80,14 +92,32 @@ public class MontePacMan extends Controller<MOVE>
 		int[] arr = game.getActivePowerPillsIndices();
 		return game.getClosestNodeIndexFromNodeIndex(pIndex, arr, DM.MANHATTAN);
 	}
+	/**
+	 * Test if the ghost is in jail or the eatable time is greater than 5.
+	 * Returns false if this is the case, otherwise true.
+	 * @param ghost
+	 * @param game
+	 * @return
+	 */
+	private boolean ghostIsDangerous (GHOST ghost, Game game){
+		if (game.getGhostEdibleTime(ghost) < 5 && game.getGhostLairTime(ghost)==0){
+			return true;
+		}
+		return false;
+	}
 	
-	
-	private GHOST nearestGhost(Game game){
+	/**
+	 * returns the nearest ghost that is either dangerous or safe.
+	 * @param game
+	 * @param dangerous
+	 * @return
+	 */
+	private GHOST nearestGhost(Game game, boolean dangerous){
 		double minDist = Double.POSITIVE_INFINITY;
 		int pIndex = game.getPacmanCurrentNodeIndex();
 		GHOST nearestGhost = null;
 		for (GHOST g : GHOST.values()){
-			if (game.getGhostLairTime(g)==0){
+			if (ghostIsDangerous(g, game)==dangerous){
 				int ghostIndex = game.getGhostCurrentNodeIndex(g);
 				double dist = game.getDistance(pIndex, ghostIndex, DM.MANHATTAN);
 				if (dist < minDist){
@@ -246,13 +276,13 @@ public class MontePacMan extends Controller<MOVE>
 	}
 	
 	private MOVE nextMoveToGhost(int pacManIndex, Game gameCopy){
-		GHOST g = nearestGhost(gameCopy);
+		GHOST g = nearestGhost(gameCopy, false);
 		int gIndex = gameCopy.getGhostCurrentNodeIndex(g);
 		return gameCopy.getNextMoveTowardsTarget(pacManIndex, gIndex, DM.MANHATTAN);
 	}
 	
 	private MOVE nextMoveAwayFromGhost(int pacManIndex, Game gameCopy){
-		GHOST g = nearestGhost(gameCopy);
+		GHOST g = nearestGhost(gameCopy, true);
 		int gIndex = gameCopy.getGhostCurrentNodeIndex(g);
 		return gameCopy.getNextMoveAwayFromTarget(pacManIndex, gIndex, DM.MANHATTAN);
 	}
