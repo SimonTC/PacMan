@@ -15,6 +15,7 @@ public class Node {
 	private int nodeIndex;
 	private int timesVisited;
 	private int distanceToParent;
+	private int pointsFromParent;
 	private Game gameState;
 	
 	public Node(int nodeIndex, Node parent, int distanceToParent){
@@ -196,6 +197,12 @@ public class Node {
 	
 	public void setQvalue(double newValue){
 		qValue = newValue;
+	}
+	public void setPointsFromParent(int points){
+		this.pointsFromParent=points;
+	}
+	public int pointsFromParent(){
+		return this.pointsFromParent;
 	}
 	
 }

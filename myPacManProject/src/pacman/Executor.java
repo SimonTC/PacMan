@@ -49,14 +49,18 @@ public class Executor
 	public static void main(String[] args)
 	{
 		Executor exec=new Executor();
-
+		
+		/*
+		//Replay a game
+		exec.replayGame("Simulation.txt", true);
+		*/
 		/*
 		//run multiple games in batch mode - good for testing.
 		int numTrials=20;
 		exec.runExperiment(new ANewAndBetterPacMan(),new RandomGhosts(),numTrials);
 		//*/
 		
-		/*
+		//*
 		//run a game in synchronous mode: game waits until controllers respond.
 		int delay=5;
 		boolean visual=true;
@@ -64,7 +68,7 @@ public class Executor
 		exec.runGame(new MontePacMan(),new RandomGhosts(),visual,delay);
   		// */
 		
-		//*
+		/*
 		//run the game in asynchronous mode.
 		boolean visual=true;
 //		exec.runGameTimed(new NearestPillPacMan(),new AggressiveGhosts(),visual);
@@ -362,7 +366,7 @@ public class Executor
 	}
 	
 	//save file for replays
-    public static void saveToFile(String data,String name,boolean append)
+    public static void saveToFile(String data, String name, boolean append)
     {
         try 
         {
