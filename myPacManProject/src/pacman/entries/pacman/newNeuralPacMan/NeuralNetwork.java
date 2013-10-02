@@ -3,8 +3,11 @@ package pacman.entries.pacman.newNeuralPacMan;
 import java.util.ArrayList;
 import java.util.Random;
 
+import pacman.entries.pacman.newNeuralPacMan.neurons.sensors.BooleanSensor;
+import pacman.entries.pacman.newNeuralPacMan.neurons.sensors.DistanceSensor;
+import pacman.entries.pacman.newNeuralPacMan.neurons.sensors.Sensor.OBJ;
 import pacman.entries.pacman.newNeuralPacMan.neurons.Neuron;
-import pacman.entries.pacman.newNeuralPacMan.neurons.sensors.IntegerSensor;
+import pacman.game.Game;
 
 public class NeuralNetwork {
 	
@@ -24,7 +27,6 @@ public class NeuralNetwork {
 		addSensors(numberOfSensors);
 		addHiddenNodes(numberOfHiddenNodes);
 		addOutputNodes(numberOfOutputNodes);
-		//connectNeuronsManually();
 		connectNeurons(hiddenNodes, sensors);
 		connectNeurons(outputNodes, hiddenNodes);
 	}
@@ -62,18 +64,26 @@ public class NeuralNetwork {
 				int i = hiddenNodes.indexOf(n);
 				n = hiddenNodes.get(i);
 			}
-		}else if (name.startsWith("S")){
-			Neuron s = new IntegerSensor(name);
+		}else if (name.startsWith("Sd")){
+			Neuron s = new DistanceSensor(name);
+			if (!sensors.contains(s)){
+				sensors.add(s);
+			} else {
+				int i = sensors.indexOf(s);
+				s = sensors.get(i);
+			}			
+			return s;
+		}else if (name.startsWith("Sb")){
+			Neuron s = new BooleanSensor(name);
 			if (!sensors.contains(s)){
 				sensors.add(s);
 			} else {
 				int i = sensors.indexOf(s);
 				s = sensors.get(i);
 			}
-			return s;
-		}
+		}		
 		return n;
-		
+	
 	}
 	
 	private void connectNeurons(ArrayList<Neuron> parents, ArrayList<Neuron>  children){
@@ -87,19 +97,18 @@ public class NeuralNetwork {
 		}
 	}
 	
-	private void connectNeuronsManually(){
-		hiddenNodes.get(0).addInputNeuron(sensors.get(0), 0.5d);
-		hiddenNodes.get(0).addInputNeuron(sensors.get(1), 0.3d);
-		outputNodes.get(0).addInputNeuron(hiddenNodes.get(0), 0.6d);
-		sensors.get(0).addOutputNeuron(hiddenNodes.get(0));
-		sensors.get(1).addOutputNeuron(hiddenNodes.get(0));
-		hiddenNodes.get(0).addOutputNeuron(outputNodes.get(0));
-	}
-	
 	private void addSensors(int numberOfSensors){
-		for (int i = 0; i < numberOfSensors; i++){
-			sensors.add( new IntegerSensor("S" + i));
-		}
+		DistanceSensor s0 = new DistanceSensor("Sd0");
+		s0.setObjectToScanFor(OBJ.GHOST);
+		sensors.add(s0);
+		
+		DistanceSensor s1 = new DistanceSensor ("Sd1");
+		s1.setObjectToScanFor(OBJ.POWERPILL);
+		sensors.add(s1);
+		
+		BooleanSensor s2 = new BooleanSensor("Sb2");
+		s2.setObjectToScanFor(OBJ.GHOST_EADABLE);
+		sensors.add(s2);
 	}
 	
 	private void addHiddenNodes(int numberOfNodes){
@@ -114,67 +123,6 @@ public class NeuralNetwork {
 		}
 	}
 
-	public double[] backPropagate(String[] inputs, String[] desiredOutputs, double learningRate){
-		//Read inputs
-		for (int i = 0; i < sensors.size(); i++){
-			double newValue = Double.parseDouble(inputs[i]);
-			sensors.get(i).setOutputValue(newValue);
-		}
-		
-		//Convert desired output values to doubles
-		double[] desiredOutputValues = new double [desiredOutputs.length];
-		for (int i = 0; i < desiredOutputs.length; i++){
-			desiredOutputValues[i] = Double.parseDouble(desiredOutputs[i]);
-		}
-		
-		//Calculate output errors
-		double[] outputError = new double [outputNodes.size()];
-		for (int i = 0; i < outputNodes.size(); i++){
-			Neuron n = outputNodes.get(i);
-			double actualOutput = n.outputValue();
-			outputError[i] = actualOutput * (1 - actualOutput) * (desiredOutputValues[i] - actualOutput);
-			n.setError(outputError[i]);			
-		}		
-		
-		//Calculate error in hidden layer
-		for(Neuron n : hiddenNodes){
-			double outputValue = n.outputValue();
-			double hiddenError = outputValue * (1-outputValue) * getWeightedErrors(n);
-			n.setError(hiddenError);
-		}
-		
-		//Change weights from input to hidden layer
-		changeWeightsFromLowerLayerToHigherLayer(hiddenNodes, learningRate);
-		
-		//Change weights from hidden layer to output layer
-		changeWeightsFromLowerLayerToHigherLayer(outputNodes, learningRate);
-		
-		return outputError;
-	}
-	
-	private void changeWeightsFromLowerLayerToHigherLayer(ArrayList<Neuron> nodesInHigherLayer, double learningRate){
-		for (Neuron n : nodesInHigherLayer){
-			for (Neuron l : n.inputNeurons()){
-				double output = l.outputValue();
-				double error = n.error();
-				double oldWeight = n.getWeight(l);
-				double changeBy = (double) learningRate * output * error;
-				double newWeight = oldWeight + changeBy;
-				n.updateInputWeight(l, newWeight);
-			}
-		}		
-	}
-	
-	private double getWeightedErrors(Neuron node){
-		double weightedErrors = 0.0;
-		for (Neuron p : node.outputNodes()){
-			double error = p.error();
-			double weight = p.getWeight(node);
-			weightedErrors += (double) error * weight;
-		}
-		return weightedErrors;
-	}
-	
 	public String getWeights(){
 		String weights ="";
 		for (Neuron n : outputNodes){
@@ -196,5 +144,25 @@ public class NeuralNetwork {
 	
 	public int numberOfInputNodes(){
 		return sensors.size();
+	}
+	
+	public ArrayList<Neuron> getSensors(){
+		return sensors;
+	}
+	
+	public ArrayList<Neuron> getOutputNodes(){
+		return outputNodes;
+	}
+	
+	public ArrayList<Neuron> getHiddenNodes(){
+		return hiddenNodes;
+	}
+	
+	public double[] returnOutputValues(int pacManIndex, Game game ){
+		double[] result = new double[outputNodes.size()];
+		for (int i = 0; i < result.length; i++){
+			result[i] = outputNodes.get(i).outputValue(pacManIndex, game);
+		}
+		return result;
 	}
 }

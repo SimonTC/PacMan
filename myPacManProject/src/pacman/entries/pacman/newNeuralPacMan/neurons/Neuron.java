@@ -3,6 +3,8 @@ package pacman.entries.pacman.newNeuralPacMan.neurons;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import pacman.game.Game;
+
 public class Neuron implements INeuron {
 	protected String name="";
 	protected ArrayList<Neuron> outputNeurons = new ArrayList<>();
@@ -50,16 +52,16 @@ public class Neuron implements INeuron {
 		return this.error;
 	}
 	
-	public double outputValue(){
-		this.inputValue = calculateInputValue();
+	public double outputValue(int pacManIndex, Game game){
+		this.inputValue = calculateInputValue(pacManIndex, game);
 		this.outputValue = calculateOutputValue(this.inputValue);
 		return this.outputValue;
 	}
 	
-	private double calculateInputValue(){
+	private double calculateInputValue(int pacManIndex, Game game){
 		double value = 0.0d;
 		for (INeuron n : inputNeurons){
-			value += (double) n.outputValue() * inputWeights.get(n);
+			value += (double) n.outputValue(pacManIndex, game) * inputWeights.get(n);
 		}
 		return value;
 	}
@@ -113,6 +115,10 @@ public class Neuron implements INeuron {
 	
 	public void setOutputValue(double newValue){
 		this.outputValue = newValue;
+	}
+	
+	public void setInputValue(double newValue){
+		this.inputValue = newValue;
 	}
 	
 
