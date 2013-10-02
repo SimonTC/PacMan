@@ -10,6 +10,17 @@ import pacman.entries.pacman.newNeuralPacMan.neurons.Neuron;
 public class NeuralTrainer {
 	NeuralNetwork nn;
 	
+	
+	public static void main(String[] args){
+		NeuralTrainer nt = new NeuralTrainer();
+		
+		NeuralNetwork n = new NeuralNetwork(3, 2, 4);
+		
+		String inputs = "0.2 0.5 0;0.3 0.2 1";
+		String outputs = "0.3 0.2 0.1 0.9;0.1 0.5 0.2 0.3";
+		nt.train(n, inputs, outputs, 0.1, 100000);
+	}
+	
 	/**
 	 * givenInputs: 1 0;0 1;1 1
 	 * expectedOutputs: 0;0;1
