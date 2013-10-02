@@ -25,6 +25,7 @@ import pacman.controllers.examples.RandomPacMan;
 import pacman.controllers.examples.StarterGhosts;
 import pacman.controllers.examples.StarterPacMan;
 import pacman.entries.pacman.neuralPacMan.NeuralPacMan;
+import pacman.entries.pacman.newNeuralPacMan.NeuPacMan;
 import pacman.entries.pacman.searchPacMan.controller.SearchPacMan;
 import pacman.game.Game;
 import pacman.game.GameView;
@@ -49,7 +50,7 @@ public class Executor
 	{
 		Executor exec=new Executor();
 		
-		//*
+		/*
 		//run multiple games in batch mode - good for testing.
 		int numTrials=20;
 		exec.runExperiment(new NeuralPacMan(40),new RandomGhosts(),numTrials);
@@ -62,11 +63,11 @@ public class Executor
 		exec.runGame(new NeuralPacMan(20),new RandomGhosts(),visual,delay);
   		// */
 		
-		/*
+		//*
 		//run the game in asynchronous mode.
 		boolean visual=true;
 //		exec.runGameTimed(new NearestPillPacMan(),new AggressiveGhosts(),visual);
-		exec.runGameTimed(new DataCollectorController(),new StarterGhosts(),visual);
+		exec.runGameTimed(new NeuPacMan(),new StarterGhosts(),visual);
 //		exec.runGameTimed(new HumanController(new KeyBoardInput()),new StarterGhosts(),visual);	
 		//*/
 		

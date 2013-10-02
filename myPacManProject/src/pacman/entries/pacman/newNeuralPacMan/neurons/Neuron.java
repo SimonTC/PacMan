@@ -52,12 +52,42 @@ public class Neuron implements INeuron {
 		return this.error;
 	}
 	
+	/**
+	 * No inputs. Used when training
+	 */
+	public double outputValue() {
+		this.inputValue = calculateInputValue();
+		this.outputValue = calculateOutputValue(this.inputValue);
+		return this.outputValue;
+	}
+	
+	/**
+	 * No inputs. Used when training
+	 * @return
+	 */
+	private double calculateInputValue(){
+		double value = 0.0d;
+		for (INeuron n : inputNeurons){
+			value += (double) n.outputValue() * inputWeights.get(n);
+		}
+		return value;
+	}
+	
+	/**
+	 * Used when playing
+	 */
 	public double outputValue(int pacManIndex, Game game){
 		this.inputValue = calculateInputValue(pacManIndex, game);
 		this.outputValue = calculateOutputValue(this.inputValue);
 		return this.outputValue;
 	}
 	
+	/**
+	 * Used when playing
+	 * @param pacManIndex
+	 * @param game
+	 * @return
+	 */
 	private double calculateInputValue(int pacManIndex, Game game){
 		double value = 0.0d;
 		for (INeuron n : inputNeurons){
@@ -120,6 +150,8 @@ public class Neuron implements INeuron {
 	public void setInputValue(double newValue){
 		this.inputValue = newValue;
 	}
+
+	
 	
 
 }
