@@ -20,20 +20,20 @@ import pacman.game.Game;
 public class SearchPacMan extends Controller<MOVE>
 {
 	//Parameters
-	private  int MAX_DEPTH; 
+	private  int MAX_DEPTH = 73; 
 	private  int PILL_VALUE = 1;
-	private  int MIN_POWER_PILL_VALUE = -2;
-	private  int NONEDIBLE_GHOST_VALUE = -5;
-	private  int EDIBLE_GHOST_VALUE = 5;
-	private  int JUNCTION_VALUE = 0;
-	private  int MIN_DISTANCE = 20;
-	private  int MIN_EADIBLE_TIME = 10;
+	private  int MIN_POWER_PILL_VALUE = -4;
+	private  int NONEDIBLE_GHOST_VALUE = -18;
+	private  int EDIBLE_GHOST_VALUE = 16;
 	private  DM DISTANCE_METRIC = DM.MANHATTAN;
-	private  int USE_MEMORY = 1;
-	private  Path currentPath = null;
-	private  int MAX_POWER_PILL_VALUE = 5;
-	private  int NEUTRAL_POWER_PILL_VALUE = 0;
+	private  int JUNCTION_VALUE = 0;
+	private  int USE_MEMORY = 0;
+	private  int MIN_DISTANCE = 17;
+	private  int MIN_EADIBLE_TIME = 1;
+	private  int MAX_POWER_PILL_VALUE = 4;
+	private  int NEUTRAL_POWER_PILL_VALUE = -4;
 	
+	private  Path currentPath = null;
 	private  int POWER_PILL_VALUE;
 	
 	private MOVE myMove=MOVE.NEUTRAL;
