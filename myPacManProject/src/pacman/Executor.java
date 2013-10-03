@@ -50,13 +50,13 @@ public class Executor
 	{
 		Executor exec=new Executor();
 		
-		/*
+		//*
 		//run multiple games in batch mode - good for testing.
-		int numTrials=20;
-		exec.runExperiment(new NeuralPacMan(40),new RandomGhosts(),numTrials);
+		int numTrials=50;
+		exec.runExperiment(new NeuPacMan(),new RandomGhosts(),numTrials);
 		//*/
 		
-		//*
+		/*
 		//run a game in synchronous mode: game waits until controllers respond.
 		int delay=5;
 		boolean visual=true;

@@ -17,11 +17,13 @@ public class NeuralTrainer {
 	public static void main(String[] args){
 		NeuralTrainer nt = new NeuralTrainer();
 		
-		NeuralNetwork n = new NeuralNetwork(3, 10, 1);
-		String[] trainingData = getTrainingData("Training data.txt");
-		String inputs = trainingData[0];
-		String outputs = trainingData[1];
-		nt.train(n, inputs, outputs, 0.15, 100000, 0.6);
+		for (int i = 1; i <=20; i++){
+			NeuralNetwork n = new NeuralNetwork(3, i, 1);
+			String[] trainingData = getTrainingData("Training data.txt");
+			String inputs = trainingData[0];
+			String outputs = trainingData[1];
+			nt.train(n, inputs, outputs, 0.1, 10000, 0.6);
+		}
 	}
 	
 	/**
@@ -51,11 +53,12 @@ public class NeuralTrainer {
 				result[i] = this.backPropagate(givenInputValues, expectedOutputValues, learningRate);
 				errors[i] = result[i][0];
 			}
-			printRunInformation(counter, result);
 		} while (!errorIsTolerable(errors, maxDiff) && counter <= maxRuns);
 		
+		printRunInformation(counter, result);
 		String weights = nn.getWeights();
 		System.out.println(weights);
+		System.out.println();
 		
 	}
 	private boolean errorIsTolerable(double[][] errors, double maxDiff){
