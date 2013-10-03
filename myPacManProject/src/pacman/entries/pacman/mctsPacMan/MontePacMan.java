@@ -1,9 +1,7 @@
 package pacman.entries.pacman.mctsPacMan;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.Random;
 
 import pacman.controllers.Controller;
 import pacman.game.Constants.DM;
