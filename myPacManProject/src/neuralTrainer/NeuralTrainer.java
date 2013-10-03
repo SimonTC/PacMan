@@ -16,9 +16,9 @@ public class NeuralTrainer {
 		
 		NeuralNetwork n = new NeuralNetwork(3, 2, 4);
 		
-		String inputs = "0.2 0.5 0;0.3 0.2 1";
-		String outputs = "0.3 0.2 0.1 4;0.1 3 0.2 0.3";
-		nt.train(n, inputs, outputs, 0.1, 100000);
+		String inputs = "0.2 0.5 0.1;0.3 0.2 0.9";
+		String outputs = "0.3 0.2 0.1 0.8;0.1 0.7 0.2 0.3";
+		nt.train(n, inputs, outputs, 0.1, 100000, 0.8);
 	}
 	
 	/**
@@ -27,7 +27,7 @@ public class NeuralTrainer {
 	 * @param givenInputs
 	 * @param expectedOutputs
 	 */
-	public void train(NeuralNetwork networkToBeTrained, String givenInputs, String expectedOutputs, double maxDiff, int maxRuns){
+	public void train(NeuralNetwork networkToBeTrained, String givenInputs, String expectedOutputs, double maxDiff, int maxRuns, double learningRate){
 		String[] expectedOutputTuples = expectedOutputs.split(";");
 		String[] givenInputTuples = givenInputs.split(";");
 		nn  = networkToBeTrained;
@@ -43,7 +43,7 @@ public class NeuralTrainer {
 				String[] givenInputValues = givenInputTuples[i].split(" ");
 				String[] expectedOutputValues = expectedOutputTuples[i].split(" ");
 									
-				result[i] = this.backPropagate(givenInputValues, expectedOutputValues, 1.5);
+				result[i] = this.backPropagate(givenInputValues, expectedOutputValues, learningRate);
 				errors[i] = result[i][0];
 			}
 			printRunInformation(counter, result);
@@ -85,7 +85,8 @@ public class NeuralTrainer {
 		for (int i = 0; i < outputNodes.size(); i++){
 			Neuron n = outputNodes.get(i);
 			actualOutput[i] = n.outputValue();
-			outputError[i] = actualOutput[i] * (1 - actualOutput[i]) * (desiredOutputValues[i] - actualOutput[i]);
+			//outputError[i] = actualOutput[i] * (1 - actualOutput[i]) * (desiredOutputValues[i] - actualOutput[i]);
+			outputError[i] = 0.5*Math.pow(desiredOutputValues[i] - actualOutput[i], 2);
 			n.setError(outputError[i]);			
 		}		
 		
