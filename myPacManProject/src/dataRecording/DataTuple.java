@@ -23,9 +23,9 @@ public class DataTuple implements Comparable<DataTuple> {
 		this.DirectionChosen = move;
 		
 		double[] sensorValues = pacMan.getSensorValues();
-		this.distanceToNearestGhost = sensorValues[0];
-		this.nearestGhostEdible  = sensorValues[1];
-		this.distanceToNearestPowerPill  = sensorValues[2];
+		this.distanceToNearestGhost = sensorValues[0];		
+		this.distanceToNearestPowerPill  = sensorValues[1];
+		this.nearestGhostEdible  = sensorValues[2];
 		
 	}
 	public DataTuple(Game game, MOVE move, SearchPacMan pacMan)

@@ -53,7 +53,7 @@ public class DataCollectorController extends SearchPacMan{
 		
 		DataTuple data = new DataTuple(game, move, this);
 				
-		studentDSL.SavePacManData(data);
+		teacherDSL.SavePacManData(data);
 		
 		return move;
 	}

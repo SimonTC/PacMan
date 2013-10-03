@@ -61,9 +61,7 @@ public class SearchPacMan extends Controller<MOVE>
 	 * Used when only depth is to be changed
 	 */
 	public SearchPacMan(int depth){
-		MAX_DEPTH = depth; 
-		
-			
+		MAX_DEPTH = depth; 			
 	}
 	
 	private void addSensors(int sensorDistance){
@@ -92,7 +90,7 @@ public class SearchPacMan extends Controller<MOVE>
 		}
 		Node thisNode = new Node(game, pacManIndex, null);
 		POWER_PILL_VALUE = calculatePowerPillValue(game, pacManIndex, MIN_DISTANCE, MIN_EADIBLE_TIME);
-	//printNodeInfo(thisNode, game);
+	
 		Path startPath = null;
 		if (currentPath == null){
 			startPath = new Path(maxDepth, thisNode, PILL_VALUE, POWER_PILL_VALUE, NONEDIBLE_GHOST_VALUE, EDIBLE_GHOST_VALUE, JUNCTION_VALUE);
@@ -104,9 +102,9 @@ public class SearchPacMan extends Controller<MOVE>
 			}
 		}
 		calculatePossiblePaths(game, maxDepth, startPath);
-	//printPossiblePaths();
+	
 		Path optimalPath = findOptimalPath();
-	//printOptimalPath(optimalPath);
+	
 		int nextNodeIndex = optimalPath.getNextNode().getNodeIndex();
 		myMove = game.getNextMoveTowardsTarget(pacManIndex, nextNodeIndex, DISTANCE_METRIC);
 		if (USE_MEMORY==1){
@@ -300,8 +298,7 @@ public class SearchPacMan extends Controller<MOVE>
 	
 	public double[] getSensorValues(){
 		return sensorValues;
-	}
-	
+	}	
 }
 
 
