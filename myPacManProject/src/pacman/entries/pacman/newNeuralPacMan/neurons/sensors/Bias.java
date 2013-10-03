@@ -18,5 +18,10 @@ public class Bias extends Sensor {
 		int[] validIndexes, Game game) {
 		return 1;
 	}
+	
+	@Override
+	protected double scan(int pacManIndex, Game game){
+		return 1;
+	}
 
 }
