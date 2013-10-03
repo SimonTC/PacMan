@@ -17,7 +17,7 @@ public class NeuralTrainer {
 		NeuralNetwork n = new NeuralNetwork(3, 2, 4);
 		
 		String inputs = "0.2 0.5 0;0.3 0.2 1";
-		String outputs = "0.3 0.2 0.1 0.9;0.1 0.5 0.2 0.3";
+		String outputs = "0.3 0.2 0.1 4;0.1 3 0.2 0.3";
 		nt.train(n, inputs, outputs, 0.1, 100000);
 	}
 	
@@ -34,7 +34,7 @@ public class NeuralTrainer {
 		
 		int numberOfOutputNodes = nn.numberOfOutputNodes();
 		double[][] errors = new double[expectedOutputTuples.length][numberOfOutputNodes];
-		
+		double[][][] result = new double[expectedOutputTuples.length][2][numberOfOutputNodes];
 		int counter = 0;
 		
 		do {
@@ -43,9 +43,10 @@ public class NeuralTrainer {
 				String[] givenInputValues = givenInputTuples[i].split(" ");
 				String[] expectedOutputValues = expectedOutputTuples[i].split(" ");
 									
-				errors[i] = this.backPropagate(givenInputValues, expectedOutputValues, 1.5);
+				result[i] = this.backPropagate(givenInputValues, expectedOutputValues, 1.5);
+				errors[i] = result[i][0];
 			}
-			printRunInformation(counter, errors);
+			printRunInformation(counter, result);
 		} while (!errorIsTolerable(errors, maxDiff) && counter <= maxRuns);
 		
 		String weights = nn.getWeights();
@@ -63,7 +64,7 @@ public class NeuralTrainer {
 		return true;
 	}
 	
-	public double[] backPropagate(String[] inputs, String[] desiredOutputs, double learningRate){
+	public double[][] backPropagate(String[] inputs, String[] desiredOutputs, double learningRate){
 		//Read inputs
 		ArrayList<Neuron> networkSensors = nn.getSensors();
 		for (int i = 0; i < networkSensors.size(); i++){
@@ -80,10 +81,11 @@ public class NeuralTrainer {
 		//Calculate output errors
 		ArrayList<Neuron> outputNodes = nn.getOutputNodes();
 		double[] outputError = new double [outputNodes.size()];
+		double[] actualOutput = new double [outputNodes.size()];
 		for (int i = 0; i < outputNodes.size(); i++){
 			Neuron n = outputNodes.get(i);
-			double actualOutput = n.outputValue();
-			outputError[i] = actualOutput * (1 - actualOutput) * (desiredOutputValues[i] - actualOutput);
+			actualOutput[i] = n.outputValue();
+			outputError[i] = actualOutput[i] * (1 - actualOutput[i]) * (desiredOutputValues[i] - actualOutput[i]);
 			n.setError(outputError[i]);			
 		}		
 		
@@ -100,8 +102,10 @@ public class NeuralTrainer {
 		
 		//Change weights from hidden layer to output layer
 		changeWeightsFromLowerLayerToHigherLayer(outputNodes, learningRate);
-		
-		return outputError;
+		double[][] result = new double[2][outputNodes.size()];
+		result[0] = outputError;
+		result[1] = actualOutput;
+		return result;
 	}
 	
 	private void changeWeightsFromLowerLayerToHigherLayer(ArrayList<Neuron> nodesInHigherLayer, double learningRate){
@@ -127,20 +131,21 @@ public class NeuralTrainer {
 		return weightedErrors;
 	}
 	
-	private void printRunInformation(int counter, double[][] errors ){
-		System.out.println("Run " + counter + ": Errors " + printErrors(errors));
+	private void printRunInformation(int counter, double[][][] values ){
+		System.out.println("Run " + counter + ": Errors " + printValues(values[0]));
+		System.out.println("Run " + counter + ": Outputs " + printValues(values[1]));
 	}
 	
-	private String printErrors(double[][] errors){
+	private String printValues(double[][] values){
 		DecimalFormatSymbols dfs = new DecimalFormatSymbols();
 		dfs.setDecimalSeparator('.');
 		dfs.setGroupingSeparator(',');
 		DecimalFormat df = new DecimalFormat("#0.000", dfs);
 		String s = "";
-		for (int i = 0; i < errors.length; i++){
+		for (int i = 0; i < values.length; i++){
 			s += "[";
-			for (int j = 0; j< errors[i].length; j++){
-				s += df.format(errors[i][j]) +" ";
+			for (int j = 0; j< values[i].length; j++){
+				s += df.format(values[i][j]) +" ";
 			}
 			s+="]";
 		}
