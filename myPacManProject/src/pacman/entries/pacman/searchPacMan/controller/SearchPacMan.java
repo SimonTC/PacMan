@@ -30,7 +30,7 @@ public class SearchPacMan extends Controller<MOVE>
 	private  int MIN_EADIBLE_TIME = 10;
 	private  DM DISTANCE_METRIC = DM.MANHATTAN;
 	private  int USE_MEMORY = 1;
-	private Path currentPath = null;
+	private  Path currentPath = null;
 	private  int MAX_POWER_PILL_VALUE = 5;
 	private  int NEUTRAL_POWER_PILL_VALUE = 0;
 	
@@ -38,6 +38,8 @@ public class SearchPacMan extends Controller<MOVE>
 	
 	private MOVE myMove=MOVE.NEUTRAL;
 	private ArrayList<Path> possiblePaths = new ArrayList<Path>();
+	
+	private ArrayList<Integer> lastIndexes = new ArrayList<>();
 	
 	public SearchPacMan(){
 		try {
@@ -62,28 +64,41 @@ public class SearchPacMan extends Controller<MOVE>
 		if (pacManIndex == game.getCurrentMaze().initialPacManNodeIndex){
 			currentPath = null;
 		}
+		
 		Node thisNode = new Node(game, pacManIndex, null);
 		POWER_PILL_VALUE = calculatePowerPillValue(game, pacManIndex, MIN_DISTANCE, MIN_EADIBLE_TIME);
-	//printNodeInfo(thisNode, game);
+		
+		addCurrentIndexToList(pacManIndex);
+		
+		//printNodeInfo(thisNode, game);
 		Path startPath = null;
 		if (currentPath == null){
 			startPath = new Path(maxDepth, thisNode, PILL_VALUE, POWER_PILL_VALUE, NONEDIBLE_GHOST_VALUE, EDIBLE_GHOST_VALUE, JUNCTION_VALUE);
 		} else {
 			if (continueDownCurrentPath(game, currentPath)){
-			startPath = currentPath;
+				startPath = currentPath;
 			}else {
 				startPath = new Path(maxDepth, thisNode, PILL_VALUE, POWER_PILL_VALUE, NONEDIBLE_GHOST_VALUE, EDIBLE_GHOST_VALUE, JUNCTION_VALUE);
 			}
 		}
 		calculatePossiblePaths(game, maxDepth, startPath);
-	//printPossiblePaths();
+
 		Path optimalPath = findOptimalPath();
-	//printOptimalPath(optimalPath);
+
 		int nextNodeIndex = optimalPath.getNextNode().getNodeIndex();
 		myMove = game.getNextMoveTowardsTarget(pacManIndex, nextNodeIndex, DISTANCE_METRIC);
 		if (USE_MEMORY==1){
 			currentPath = optimalPath;
 		}
+		
+		
+		if (hasntMoved()){
+			int[] pillIndexes = game.getActivePillsIndices();
+			int nextPillIndex = game.getClosestNodeIndexFromNodeIndex(pacManIndex, pillIndexes, DISTANCE_METRIC);
+			lastIndexes.clear();
+			myMove =  game.getNextMoveTowardsTarget(pacManIndex, nextPillIndex, DISTANCE_METRIC);
+		}
+		
 		return myMove;
 	}
 	/*
@@ -263,6 +278,39 @@ public class SearchPacMan extends Controller<MOVE>
 		System.out.println();
 	}
 	
+	private boolean startEndGame(Game game){
+		int orgNumberOfPills = game.getPillIndices().length;
+		int curNumberOfPills = game.getActivePillsIndices().length;
+		double ratio = (double) curNumberOfPills / (double) orgNumberOfPills;
+		if (ratio < 0.1d){
+			return true;
+		}
+		return false;
+	}
+	
+	private void addCurrentIndexToList(int pacManIndex){
+		if (lastIndexes.size()>= 40){
+			lastIndexes.remove(0);
+		}
+		lastIndexes.add(pacManIndex);
+	}
+	
+	private boolean hasntMoved(){
+		int counter;
+		int i = lastIndexes.get(lastIndexes.size() - 1);
+		counter = 0;
+		for (int j = lastIndexes.size() - 2; j >= 0; j--){
+			if (lastIndexes.get(j) == i){
+				counter++;
+				if (counter >= 3){
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+		
 }
 
 
