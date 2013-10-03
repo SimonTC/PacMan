@@ -56,11 +56,11 @@ public class Executor
 		exec.runExperiment(new NeuralPacMan(40),new RandomGhosts(),numTrials);
 		//*/
 		
-		/*
+		//*
 		//run a game in synchronous mode: game waits until controllers respond.
 		int delay=5;
 		boolean visual=true;
-		exec.runGame(new SearchPacMan(),new RandomGhosts(),visual,delay);
+		exec.runGame(new NeuPacMan(),new RandomGhosts(),visual,delay);
   		// */
 		
 		/*
@@ -90,7 +90,7 @@ public class Executor
 		//*/
 		
 		
-		//*
+		/*
 		// Collect gameplay data by using the dataRecording package
 		boolean visual=true;
 		exec.runGameTimed(new DataCollectorController(null, "trainingData.txt"), new StarterGhosts(),visual);

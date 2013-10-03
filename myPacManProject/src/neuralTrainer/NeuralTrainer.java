@@ -4,8 +4,11 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 
+import dataRecording.DataTuple;
+
 import pacman.entries.pacman.newNeuralPacMan.NeuralNetwork;
 import pacman.entries.pacman.newNeuralPacMan.neurons.Neuron;
+import pacman.game.util.IO;
 
 public class NeuralTrainer {
 	NeuralNetwork nn;
@@ -14,11 +17,11 @@ public class NeuralTrainer {
 	public static void main(String[] args){
 		NeuralTrainer nt = new NeuralTrainer();
 		
-		NeuralNetwork n = new NeuralNetwork(3, 10, 4);
-		
-		String inputs = "1 1 1;0 0 0";
-		String outputs = "1 1 1 1;0 0 0 0";
-		nt.train(n, inputs, outputs, 0.01, 100000, 0.1);
+		NeuralNetwork n = new NeuralNetwork(3, 10, 1);
+		String[] trainingData = getTrainingData("Training data.txt");
+		String inputs = trainingData[0];
+		String outputs = trainingData[1];
+		nt.train(n, inputs, outputs, 0.15, 100000, 0.6);
 	}
 	
 	/**
@@ -138,24 +141,43 @@ public class NeuralTrainer {
 	}
 	
 	private void printRunInformation(int counter, double[][][] values ){
-		System.out.println("Run " + counter + ": Errors " + printValues(values[0]));
-		System.out.println("Run " + counter + ": Outputs " + printValues(values[1]));
+		System.out.println("Run " + counter + ": Errors " + printValues(values, 0));
+		System.out.println("Run " + counter + ": Outputs " + printValues(values, 1));
 	}
 	
-	private String printValues(double[][] values){
+	private String printValues(double[][][] values, int arrayWithValuesToPrint){
 		DecimalFormatSymbols dfs = new DecimalFormatSymbols();
 		dfs.setDecimalSeparator('.');
 		dfs.setGroupingSeparator(',');
 		DecimalFormat df = new DecimalFormat("#0.000", dfs);
 		String s = "";
+		int k = arrayWithValuesToPrint;
 		for (int i = 0; i < values.length; i++){
 			s += "[";
-			for (int j = 0; j< values[i].length; j++){
-				s += df.format(values[i][j]) +" ";
+			for (int j = 0; j< values[i][k].length; j++){
+				s += df.format(values[i][k][j]) +" ";
 			}
 			s+="]";
 		}
 		return s;
+	}
+	
+	private static String[] getTrainingData(String fileName){
+		String data = IO.loadFile(fileName);
+		String[] dataLine = data.split("\n");
+		String[] result = new String[2];
+		result[0] ="";
+		result[1] ="";
+		
+		for(int i = 0; i < dataLine.length; i++)
+		{
+			String[] trainingData = dataLine[i].split(";");
+			result[0] += trainingData[0] +";";
+			result[1] += trainingData[1] +";";
+		}
+		
+		return result;
+		
 	}
 
 }

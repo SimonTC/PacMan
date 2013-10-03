@@ -36,6 +36,9 @@ public class NeuralNetwork {
 		String[] pairs = networkTopology.split(";");
 		for (int i = 0; i < pairs.length; i++){
 			String[] parts = pairs[i].split(",");
+			if (parts[0].equalsIgnoreCase("\n")){
+				break;
+			}
 			String parent = parts[0];
 			String child = parts[1];
 			Double weight = Double.parseDouble(parts[2]);
@@ -65,40 +68,54 @@ public class NeuralNetwork {
 				int i = hiddenNodes.indexOf(n);
 				n = hiddenNodes.get(i);
 			}
-		}else if (name.startsWith("Sd")){
-			Neuron s = new DistanceSensor(name);
+		}else if (name.startsWith("Sd0")){
+			DistanceSensor s = new DistanceSensor(name);
 			if (!sensors.contains(s)){
+				s.setObjectToScanFor(OBJ.GHOST);
 				sensors.add(s);
 			} else {
 				int i = sensors.indexOf(s);
-				s = sensors.get(i);
+				s = (DistanceSensor) sensors.get(i);
+			}			
+			return s;
+		}else if (name.startsWith("Sd1")){
+			DistanceSensor s = new DistanceSensor(name);
+			if (!sensors.contains(s)){
+				s.setObjectToScanFor(OBJ.POWERPILL);
+				sensors.add(s);
+			} else {
+				int i = sensors.indexOf(s);
+				s = (DistanceSensor) sensors.get(i);
 			}			
 			return s;
 		}else if (name.startsWith("Sb")){
-			Neuron s = new BooleanSensor(name);
+			BooleanSensor s = new BooleanSensor(name);
 			if (!sensors.contains(s)){
+				s.setObjectToScanFor(OBJ.GHOST_EADABLE);
 				sensors.add(s);
 			} else {
 				int i = sensors.indexOf(s);
-				s = sensors.get(i);
+				s = (BooleanSensor) sensors.get(i);
 			}
 			return s;
 		}else if (name.startsWith("B0")){
-			Neuron b = new Bias(name);
+			Bias b = new Bias(name);
 			if (!sensors.contains(b)){
+				b.setObjectToScanFor(OBJ.BIAS);
 				sensors.add(b);
 			} else {
 				int i = sensors.indexOf(b);
-				b = sensors.get(i);
+				b = (Bias) sensors.get(i);
 			}
 			return b;
 		}else if (name.startsWith("B1")){
-			Neuron b = new Bias(name);
+			Bias b = new Bias(name);
 			if (!sensors.contains(b)){
+				b.setObjectToScanFor(OBJ.BIAS);
 				sensors.add(b);
 			} else {
 				int i = sensors.indexOf(b);
-				b = sensors.get(i);
+				b = (Bias) sensors.get(i);
 			}
 			return b;
 		}
@@ -130,7 +147,9 @@ public class NeuralNetwork {
 		sensors.add(s2);
 		
 		//Add Bias Node
-		sensors.add(new Bias("B" + 0));
+		Bias b = new Bias("B" + 0);
+		b.setObjectToScanFor(OBJ.BIAS);
+		sensors.add(b);
 	}
 	
 	private void addHiddenNodes(int numberOfNodes){
@@ -139,7 +158,9 @@ public class NeuralNetwork {
 		}
 		
 		//Add Bias Node
-		hiddenNodes.add(new Bias("B" + 1));
+		Bias b = new Bias("B" + 1);
+		b.setObjectToScanFor(OBJ.BIAS);
+		hiddenNodes.add(b);
 	}
 	
 	private void addOutputNodes(int numberOfNodes){

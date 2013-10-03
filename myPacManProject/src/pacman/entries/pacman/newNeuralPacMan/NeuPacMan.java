@@ -5,6 +5,7 @@ import pacman.entries.pacman.neuralPacMan.nodes.sensors.Sensor.OBJ;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
+import pacman.game.util.IO;
 import pacman.game.Game;
 
 /*
@@ -19,7 +20,20 @@ public class NeuPacMan extends Controller<MOVE>
 	private double outputValue;
 	
 	public NeuPacMan(){
-		nn = new NeuralNetwork(3, 2, 1);
+		String data;
+		try {
+			 data = IO.loadFile("OptimalWeights.txt");
+		} 
+		catch (Exception e){
+			data = "";
+		}
+		String topology = data;
+		if (topology.equalsIgnoreCase("")){
+			nn = new NeuralNetwork(3, 2, 1);
+		}else{
+			nn = new NeuralNetwork(topology);
+		}
+		
 	}
 	
 	public MOVE getMove(Game game, long timeDue) {

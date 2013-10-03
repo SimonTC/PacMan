@@ -7,7 +7,7 @@ import pacman.game.Constants.GHOST;
 import pacman.entries.pacman.newNeuralPacMan.neurons.Neuron;
 
 public  abstract class Sensor extends Neuron {
-	public enum OBJ {GHOST, GHOST_EADABLE, POWERPILL, PILL};
+	public enum OBJ {GHOST, GHOST_EADABLE, POWERPILL, PILL, BIAS};
 	protected OBJ objectToScanFor;
 	
 	public Sensor(String name){
