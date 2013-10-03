@@ -14,7 +14,7 @@ public class Bias extends Sensor {
 	}
 
 	@Override
-	protected float getNormalizedSensorValue(int pacManIndex,
+	protected double getNormalizedSensorValue(int pacManIndex,
 		int[] validIndexes, Game game) {
 		return 1;
 	}

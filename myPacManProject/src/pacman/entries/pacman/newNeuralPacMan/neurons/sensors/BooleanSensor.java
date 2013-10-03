@@ -12,7 +12,7 @@ public class BooleanSensor extends Sensor {
 	}
 
 	@Override
-	protected float getNormalizedSensorValue(int pacManIndex, int[] validIndexes, Game game) {
+	protected double getNormalizedSensorValue(int pacManIndex, int[] validIndexes, Game game) {
 		switch (objectToScanFor) {
 		case GHOST_EADABLE: return nearestGhostIsEatable(pacManIndex, game);
 		default: return 0;

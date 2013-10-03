@@ -61,6 +61,6 @@ public  abstract class Sensor extends Neuron {
 	/*
 	 * Scans it's sensor area and returns a double based on the items in the area
 	 */
-	protected abstract float getNormalizedSensorValue(int pacManIndex, int[]validIndexes, Game game);
+	protected abstract double getNormalizedSensorValue(int pacManIndex, int[]validIndexes, Game game);
 	
 }
