@@ -14,11 +14,11 @@ public class NeuralTrainer {
 	public static void main(String[] args){
 		NeuralTrainer nt = new NeuralTrainer();
 		
-		NeuralNetwork n = new NeuralNetwork(3, 2, 4);
+		NeuralNetwork n = new NeuralNetwork(3, 10, 4);
 		
 		String inputs = "1 1 1;0 0 0";
 		String outputs = "1 1 1 1;0 0 0 0";
-		nt.train(n, inputs, outputs, 0.1, 1000000, 0.7);
+		nt.train(n, inputs, outputs, 0.1, 100000, 0.1);
 	}
 	
 	/**
