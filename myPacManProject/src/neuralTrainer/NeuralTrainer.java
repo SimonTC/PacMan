@@ -42,7 +42,9 @@ public class NeuralTrainer {
 			for (int i = 0; i < givenInputTuples.length; i++){
 				String[] givenInputValues = givenInputTuples[i].split(" ");
 				String[] expectedOutputValues = expectedOutputTuples[i].split(" ");
-									
+				
+				setSensorOutputs(givenInputValues);
+				
 				result[i] = this.backPropagate(givenInputValues, expectedOutputValues, learningRate);
 				errors[i] = result[i][0];
 			}
@@ -64,13 +66,16 @@ public class NeuralTrainer {
 		return true;
 	}
 	
-	public double[][] backPropagate(String[] inputs, String[] desiredOutputs, double learningRate){
+	private void setSensorOutputs(String[] inputs){
 		//Read inputs
 		ArrayList<Neuron> networkSensors = nn.getSensors();
 		for (int i = 0; i < networkSensors.size() - 1; i++){
 			double newValue = Double.parseDouble(inputs[i]);
 			networkSensors.get(i).setOutputValue(newValue);
 		}
+	}
+	
+	public double[][] backPropagate(String[] inputs, String[] desiredOutputs, double learningRate){
 		
 		//Convert desired output values to doubles
 		double[] desiredOutputValues = new double [desiredOutputs.length];

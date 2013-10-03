@@ -60,7 +60,7 @@ public class Executor
 		//run a game in synchronous mode: game waits until controllers respond.
 		int delay=5;
 		boolean visual=true;
-		exec.runGame(new NeuPacMan(),new RandomGhosts(),visual,delay);
+		exec.runGame(new SearchPacMan(),new RandomGhosts(),visual,delay);
   		// */
 		
 		/*

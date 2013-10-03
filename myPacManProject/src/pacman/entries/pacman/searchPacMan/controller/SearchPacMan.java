@@ -7,10 +7,10 @@ import java.util.Random;
 import java.util.Scanner;
 
 import pacman.controllers.Controller;
-import pacman.entries.pacman.neuralPacMan.nodes.sensors.BooleanSensor;
-import pacman.entries.pacman.neuralPacMan.nodes.sensors.DistanceSensor;
-import pacman.entries.pacman.neuralPacMan.nodes.sensors.Sensor;
-import pacman.entries.pacman.neuralPacMan.nodes.sensors.Sensor.OBJ;
+import pacman.entries.pacman.newNeuralPacMan.neurons.Neuron;
+import pacman.entries.pacman.newNeuralPacMan.neurons.sensors.BooleanSensor;
+import pacman.entries.pacman.newNeuralPacMan.neurons.sensors.DistanceSensor;
+import pacman.entries.pacman.newNeuralPacMan.neurons.sensors.Sensor.OBJ;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -25,7 +25,7 @@ public class SearchPacMan extends Controller<MOVE>
 {
 	//Recording equipment
 	private final int NUMBER_OF_SENSORS = 3;
-	private Sensor[] sensors = new Sensor[NUMBER_OF_SENSORS];
+	ArrayList<Neuron> sensors = new ArrayList<>();
 	private double[] sensorValues = new double[NUMBER_OF_SENSORS];
 	
 	//Parameters
@@ -52,7 +52,7 @@ public class SearchPacMan extends Controller<MOVE>
 		try {
 			loadParameters("PacManParameters");
 		} catch (FileNotFoundException e) {
-			//System.out.println("Bruger standard parametre");
+			System.out.println("Bruger standard parametre");
 		}
 		//Used in recording
 		addSensors(0);
@@ -67,9 +67,17 @@ public class SearchPacMan extends Controller<MOVE>
 	}
 	
 	private void addSensors(int sensorDistance){
-		sensors[0] = new DistanceSensor(OBJ.GHOST);
-		sensors[1] = new BooleanSensor(OBJ.GHOST_EADABLE);
-		sensors[2] = new DistanceSensor (OBJ.POWERPILL);		
+		DistanceSensor s0 = new DistanceSensor("Sd0");
+		s0.setObjectToScanFor(OBJ.GHOST);
+		sensors.add(s0);
+		
+		DistanceSensor s1 = new DistanceSensor ("Sd1");
+		s1.setObjectToScanFor(OBJ.POWERPILL);
+		sensors.add(s1);
+		
+		BooleanSensor s2 = new BooleanSensor("Sb2");
+		s2.setObjectToScanFor(OBJ.GHOST_EADABLE);
+		sensors.add(s2);		
 	}
 	
 	public MOVE getMove(Game game, long timeDue) 
@@ -107,7 +115,7 @@ public class SearchPacMan extends Controller<MOVE>
 		
 		//reading sensor values (Used in training)
 		for (int i = 0; i < NUMBER_OF_SENSORS; i++){
-			double value = sensors[i].value(pacManIndex, game);
+			double value = sensors.get(i).outputValue(pacManIndex, game);
 			sensorValues[i] = (long) (value * 10000 + 0.5) / 10000.0;
 		}
 		

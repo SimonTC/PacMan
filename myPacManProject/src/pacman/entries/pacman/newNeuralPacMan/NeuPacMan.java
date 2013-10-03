@@ -16,18 +16,19 @@ public class NeuPacMan extends Controller<MOVE>
 {
 	private MOVE myMove=MOVE.NEUTRAL;
 	private NeuralNetwork nn;
+	private double outputValue;
 	
 	public NeuPacMan(){
-		nn = new NeuralNetwork(3, 2, 4);
+		nn = new NeuralNetwork(3, 2, 1);
 	}
 	
 	public MOVE getMove(Game game, long timeDue) {
 		int pacManIndex = game.getPacmanCurrentNodeIndex();
-		double maxValue = Double.NEGATIVE_INFINITY;
-		int maxIndex = -1;
-		
+				
 		//Reading output values
 		double[] outputValues = nn.returnOutputValues(pacManIndex, game);
+		outputValue = outputValues[0];
+		/*
 		for (int i = 0; i < outputValues.length; i++){
 			double value = outputValues[i];
 			if ( value > maxValue){
@@ -35,18 +36,29 @@ public class NeuPacMan extends Controller<MOVE>
 				maxIndex = i;
 			}
 		}		
-		
+		*/
 		int ghostIndex = nearestItemIndex(game, pacManIndex, OBJ.GHOST);
 		int pill = nearestItemIndex(game, pacManIndex, OBJ.PILL);
 		int powerPill = nearestItemIndex(game, pacManIndex, OBJ.POWERPILL);
 		
-		DM dm = DM.EUCLID;
-		switch (maxIndex){
+		DM dm = DM.MANHATTAN;		
+		if (isBetween(outputValue, 0.0d, 0.250d)){
+			myMove = game.getNextMoveTowardsTarget(pacManIndex, ghostIndex, dm);
+		} else if (isBetween(outputValue, 0.250d, 0.500d)){
+			myMove = game.getNextMoveAwayFromTarget(pacManIndex, ghostIndex, dm);
+		}else if (isBetween(outputValue, 0.500d, 0.750d)){
+			game.getNextMoveTowardsTarget(pacManIndex, powerPill, dm);
+		}else if (isBetween(outputValue, 0.750d, 1.000d)){
+			myMove = game.getNextMoveTowardsTarget(pacManIndex, pill, dm);
+		}
+		
+		/*switch (maxIndex){
 		case 0: myMove = game.getNextMoveTowardsTarget(pacManIndex, ghostIndex, dm); break;
 		case 1: myMove = game.getNextMoveAwayFromTarget(pacManIndex, ghostIndex, dm); break;
 		case 2: myMove = game.getNextMoveTowardsTarget(pacManIndex, powerPill, dm); break;
 		case 3: myMove = game.getNextMoveTowardsTarget(pacManIndex, pill, dm); break;
 		}
+		*/
 
 		return myMove;
 	}
@@ -97,5 +109,27 @@ public class NeuPacMan extends Controller<MOVE>
 			}
 		}
 		return minIndex;
+	}
+	
+	/**
+	 * 
+	 * @param d
+	 * @param lBound
+	 * @param uBound
+	 * @return true if d is between lBound (inclusive) and uBound (exclusive)
+	 */
+	private boolean isBetween(double d, double lBound, double uBound){
+		if (d >= lBound && d < uBound){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Used when training the NeuralNetwork
+	 * @return
+	 */
+	public double outputValue(){
+		return this.outputValue;
 	}
 }
