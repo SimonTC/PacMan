@@ -18,7 +18,7 @@ public class NeuralTrainer {
 		
 		String inputs = "1 1 1;0 0 0";
 		String outputs = "1 1 1 1;0 0 0 0";
-		nt.train(n, inputs, outputs, 0.1, 100000, 0.1);
+		nt.train(n, inputs, outputs, 0.01, 100000, 0.1);
 	}
 	
 	/**
@@ -67,7 +67,7 @@ public class NeuralTrainer {
 	public double[][] backPropagate(String[] inputs, String[] desiredOutputs, double learningRate){
 		//Read inputs
 		ArrayList<Neuron> networkSensors = nn.getSensors();
-		for (int i = 0; i < networkSensors.size(); i++){
+		for (int i = 0; i < networkSensors.size() - 1; i++){
 			double newValue = Double.parseDouble(inputs[i]);
 			networkSensors.get(i).setOutputValue(newValue);
 		}

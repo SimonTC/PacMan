@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import pacman.entries.pacman.newNeuralPacMan.neurons.sensors.BooleanSensor;
+import pacman.entries.pacman.newNeuralPacMan.neurons.sensors.Bias;
 import pacman.entries.pacman.newNeuralPacMan.neurons.sensors.DistanceSensor;
 import pacman.entries.pacman.newNeuralPacMan.neurons.sensors.Sensor.OBJ;
 import pacman.entries.pacman.newNeuralPacMan.neurons.Neuron;
@@ -81,9 +82,27 @@ public class NeuralNetwork {
 				int i = sensors.indexOf(s);
 				s = sensors.get(i);
 			}
-		}		
-		return n;
-	
+			return s;
+		}else if (name.startsWith("B0")){
+			Neuron b = new Bias(name);
+			if (!sensors.contains(b)){
+				sensors.add(b);
+			} else {
+				int i = sensors.indexOf(b);
+				b = sensors.get(i);
+			}
+			return b;
+		}else if (name.startsWith("B1")){
+			Neuron b = new Bias(name);
+			if (!sensors.contains(b)){
+				sensors.add(b);
+			} else {
+				int i = sensors.indexOf(b);
+				b = sensors.get(i);
+			}
+			return b;
+		}
+		return n;	
 	}
 	
 	private void connectNeurons(ArrayList<Neuron> parents, ArrayList<Neuron>  children){
@@ -109,12 +128,18 @@ public class NeuralNetwork {
 		BooleanSensor s2 = new BooleanSensor("Sb2");
 		s2.setObjectToScanFor(OBJ.GHOST_EADABLE);
 		sensors.add(s2);
+		
+		//Add Bias Node
+		sensors.add(new Bias("B" + 0));
 	}
 	
 	private void addHiddenNodes(int numberOfNodes){
 		for (int i = 0; i < numberOfNodes; i++){
 			hiddenNodes.add( new Neuron("HN" + i));
 		}
+		
+		//Add Bias Node
+		hiddenNodes.add(new Bias("B" + 1));
 	}
 	
 	private void addOutputNodes(int numberOfNodes){
