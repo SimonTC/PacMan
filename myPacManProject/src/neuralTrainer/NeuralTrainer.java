@@ -16,9 +16,9 @@ public class NeuralTrainer {
 		
 		NeuralNetwork n = new NeuralNetwork(3, 2, 4);
 		
-		String inputs = "0.2 0.5 0.1;0.3 0.2 0.9";
-		String outputs = "0.3 0.2 0.1 0.8;0.1 0.7 0.2 0.3";
-		nt.train(n, inputs, outputs, 0.1, 100000, 0.8);
+		String inputs = "1 1 1;0 0 0";
+		String outputs = "1 1 1 1;0 0 0 0";
+		nt.train(n, inputs, outputs, 0.1, 1000000, 0.7);
 	}
 	
 	/**
@@ -85,8 +85,8 @@ public class NeuralTrainer {
 		for (int i = 0; i < outputNodes.size(); i++){
 			Neuron n = outputNodes.get(i);
 			actualOutput[i] = n.outputValue();
-			//outputError[i] = actualOutput[i] * (1 - actualOutput[i]) * (desiredOutputValues[i] - actualOutput[i]);
-			outputError[i] = 0.5*Math.pow(desiredOutputValues[i] - actualOutput[i], 2);
+			outputError[i] = actualOutput[i] * (1 - actualOutput[i]) * (desiredOutputValues[i] - actualOutput[i]);
+			//outputError[i] = 0.5*Math.pow(desiredOutputValues[i] - actualOutput[i], 2);
 			n.setError(outputError[i]);			
 		}		
 		
