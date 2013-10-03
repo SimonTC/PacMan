@@ -44,7 +44,7 @@ public class DataCollectorController extends SearchPacMan{
 		this.teacherFile = teacherFile;
 		this.studentFile = studentFile;
 		this.teacherDSL = new DataSaverLoader(teacherFile);
-		this.studentDSL = new DataSaverLoader(studentFile);
+		//this.studentDSL = new DataSaverLoader(studentFile);
 	}
 	
 	@Override
